@@ -1,0 +1,115 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&family=Sofia&display=swap');
+
+.logo {
+    color: #FDF1F1;
+    font-size: 1vw;
+    font-family: 'Sofia', cursive;
+    font-weight: bold;
+
+}
+
+
+.nav-link{
+    color: #FDF1F1;
+
+}
+
+.nav-item a:hover{
+    color: #2c1a4d;
+
+}
+
+.dropdown-menu{
+    border-width: 5;
+    border-style: solid;
+    border-color: #6f42c1;
+}
+
+.dropdown-divider{
+    background-color:#6f42c1;
+}
+
+.dropdown-menu a:hover{
+    background-color:#8540f5;
+    color:#FDF1F1
+}
+
+body{
+    margin: 0;
+    font-family: 'Noto Sans', sans-serif;
+}
+
+
+.bg-light-color{
+    background-color: #6f42c1;
+}
+
+h2{
+    color: #9d6ff3;
+    font-family: 'Sofia', cursive;
+    margin-top: 1vw;
+    margin-left: 25%;
+
+}
+
+/*Carrossel*/
+
+.carousel-inner {
+    padding: 1em;
+  }
+  .card {
+    margin: 0 0.5em;
+    box-shadow: 2px 6px 8px 0 rgba(22, 22, 26, 0.18);
+    border: none;
+  }
+  .carousel-control-prev,
+  .carousel-control-next {
+    background-color: #e1e1e1;
+    width: 6vh;
+    height: 6vh;
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+
+  @media (min-width: 923px) {
+    .carousel{
+        padding: 5px;
+        width: 50%;
+        margin-left: 25%;
+        border: 5px solid #6f42c1;
+        border-radius: 25px;
+
+    }
+    .carousel-item {
+      margin-right: 0;
+      flex: 0 0 calc(100%/4);
+      display: block;
+    }
+    .carousel-inner {
+      display: flex;
+    }
+  }
+  .card .img-wrapper {
+      max-width: 100%;
+      height: 13em;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+  }
+  .card img {
+      max-height: 100%;
+  }
+  
+  @media (max-width: 921px) {
+    .card .img-wrapper {
+      height: 17em;
+    }
+    .carousel{
+        padding: 5px;
+        border: 2px solid #6f42c1;
+        border-radius: 15px;
+
+    }
+  }
