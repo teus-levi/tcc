@@ -1,7 +1,7 @@
 @extends('layout')
 
 @section('titulo')
-    BabyOn - Cadastro de Estoque
+    BabyOn - Lista de Estoque
 @endsection
 
 
@@ -9,12 +9,14 @@
 
 
     <h2 style="margin-left: 0%;" class="text-center">Estoque</h2>
+    <p class="text-muted text-center mb-5">Estoque do produto: {{$est[0]->n_produto}}</p>
     
 
 
 <div class="container">
     <div class="d-flex justify-content-end">
-    <form action="/listarProdutos" method="get">
+    <form action="/registrarEstoque/{{$est[0]->produto}}" method="POST">
+        @csrf
         <button class="btn btn-success">
             <i class="fa-solid fa-plus"></i>
         </button>
@@ -33,16 +35,24 @@
                 <th>Ação</th>
             </tr>
             <tbody>
-                @foreach ($estoque as $item)
+                @foreach ($est as $item)
                     <tr>
-                        {{ $produto = Produto::find($item->produto) }}
                         <th>{{$item->id}}</th>
-                        <th>{{$produto->nome}}</th>
+                        <th>{{$item->n_produto}}</th>
                         <th>{{$item->quantidade}}</th>
                         <th>{{$item->precoCompra}}</th>
                         <th>{{$item->lote}}</th>
                         <th>{{$item->validade}}</th>
-                        <th>{{$item->id}}</th>
+                        <th>
+                        <form action="/editarEstoque/{{ $item->id }}" method="POST">
+                            @csrf
+                            <button class="btn btn-warning btn-sm mb-2"> <i class="fa-solid fa-pen-to-square"></i> Editar</button>
+                        </form>
+                        <form  class="deleteAlert" action="/removerEstoque/{{ $item->id }}" method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-danger btn-sm"> <i class="fas fa-trash"></i> Excluir</button>    
+                        </form>
+                        </th>
                     </tr>
                 @endforeach
                 

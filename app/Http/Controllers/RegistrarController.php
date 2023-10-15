@@ -130,7 +130,7 @@ class RegistrarController extends Controller
     }
 
     public function reg_estoque(Request $request){
-        if(Auth::check()){            
+        if(Auth::check()){    
             $produto = Produto::find($request->id);
             return view('registros.estoque', compact('produto'));
         } else{

@@ -5,6 +5,7 @@ use App\Http\Controllers\CadastroController;
 use App\Http\Controllers\RegistrarController;
 use App\Http\Controllers\RemoverController;
 use App\Http\Controllers\ListarController;
+use App\Http\Controllers\EditarController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -47,7 +48,17 @@ Route::post('/registrarEstoque/{id}', [RegistrarController::class, 'reg_estoque'
 Route::post('/salvarEstoque/{id}', [RegistrarController::class, 'store_estoque'])->name('salvarEstoque');
 
 Route::get('/listarProdutos', [ListarController::class, 'list_prod'])->name('listarProdutos');
-Route::get('/listarEstoque', [ListarController::class, 'list_estoque'])->name('listarEstoque');
+Route::post('/listarEstoque/{id}', [ListarController::class, 'list_estoque'])->name('listarEstoque');
+
+Route::post('/editarProduto/{id}', [EditarController::class, 'edit_prod'])->name('editarProduto');
+Route::post('/editarEstoque/{id}', [EditarController::class, 'edit_estoque'])->name('editarEstoque');
+Route::post('/storeEditProduto/{id}', [EditarController::class, 'store_prod'])->name('salvarEditProduto');
+Route::post('/storeEditEstoque/{id}', [EditarController::class, 'store_estoque'])->name('salvarEditEstoque');
+
+Route::post('/removerProduto/{id}', [EditarController::class, 'delete_prod'])->name('removerProduto');
+Route::post('/removerEstoque/{id}', [EditarController::class, 'delete_estoque'])->name('removerEstoque');
+
+
 
 
 

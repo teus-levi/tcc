@@ -41,18 +41,28 @@ class ListarController extends Controller
                             ->leftJoin('estoques', 'produtos.id', '=', 'estoques.produto')
                             ->join('categorias', 'categorias.id', '=', 'produtos.categoria')
                             ->join('marcas', 'marcas.id', '=', 'produtos.marca')
-                            ->select('produtos.*', 'estoques.produto', 'estoques.quantidade', 
+                            ->whereNull('produtos.deleted_at')
+                            ->select('produtos.*', DB::raw('SUM(estoques.quantidade) as quantidade'), 
                             'categorias.nome as n_categoria', 'marcas.nome as n_marca')
-                            ->orderBy('estoques.produto', 'desc')->paginate(10);
+                            ->groupBy('produtos.id')
+                            ->orderBy('estoques.produto', 'asc')->paginate(10);
             //dd($produtos);
+
             return view('listar.produtos', compact('produtos'));
         } else{
             return redirect('/home');
         }
     }
 
-    public function list_estoque(){
-        $estoque = Estoque::query()->orderBy('id')->get();
-        return view('listar.estoque', compact('estoque'));
+    public function list_estoque(Request $request){
+        //$estoque = Estoque::query()->orderBy('id')->get();
+        $est = DB::table('estoques')
+        ->join('produtos', 'produtos.id', '=', 'estoques.produto')
+        ->whereNull('estoques.deleted_at')
+        ->where('estoques.produto', '=', $request->id)
+        ->select('estoques.*', 'produtos.nome as n_produto')
+        ->orderBy('estoques.id', 'desc')->get();
+        return view('listar.estoque', compact('est'));
     }
+
 }

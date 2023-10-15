@@ -52,7 +52,7 @@
                                 0
                             @endif
                         </th>
-                            @if($item->produto == 0 || is_null($item->produto))
+                            @if($item->quantidade == 0 || is_null($item->quantidade))
                                 <form action="/registrarEstoque/{{ $item->id }}" method="POST">
                                     @csrf
                                     <th>
@@ -74,9 +74,9 @@
                                 @csrf
                                 <button class="btn btn-warning btn-sm mb-2"> <i class="fa-solid fa-pen-to-square"></i> Editar</button>
                             </form>
-                            <form action="/removerProduto/{{ $item->id }}" method="POST">
+                            <form  class="deleteAlert" action="/removerProduto/{{ $item->id }}" method="POST">
                                 @csrf
-                                <button class="btn btn-danger btn-sm"> <i class="fas fa-trash"></i> Excluir</button>    
+                                <button type="submit" class="btn btn-danger btn-sm"> <i class="fas fa-trash"></i> Excluir</button>    
                             </form>
                             </th>
                     </tr>
@@ -90,3 +90,23 @@
     </div>
 </div>
 @endsection
+@push('scripts')
+
+<script>
+      $('.deleteAlert').on('submit', function(e){
+    e.preventDefault();
+    swal({
+      title: "Atenção!",
+      text: "O produto será deletado, deseja confirmar a exclusão?",
+      icon: "warning",
+      buttons: ["Cancelar", "Confirmar"],
+      dangerMode: true,
+    })
+    .then((willDelete) => {
+      if (willDelete) {
+        this.submit()
+      }
+    }); 
+  })
+</script>
+@endpush
