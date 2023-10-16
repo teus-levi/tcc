@@ -23,6 +23,9 @@
     border-width: 5;
     border-style: solid;
     border-color: #6f42c1;
+    max-height: 200px;
+    width:280px;
+    overflow-y: scroll;
 }
 
 .dropdown-divider{
@@ -79,7 +82,11 @@ h2{
     top: 50%;
     transform: translateY(-50%);
   }
-
+/*Imagens no dropdown*/
+.cart-img{display:inline-block;vertical-align:middle}.dropdown-cart .cart-img img{width:50px;margin:10px}
+.dropdown-alerts li.divider,.dropdown-tasks li.divider{margin:0}
+.list-style-none li.divider{margin:10px 0;height:1px;background:rgba(120,130,140,.13)}
+cart-content{display:inline-block;vertical-align:middle}.dropdown-cart .cart-content h5{margin:0;font-weight:500;text-overflow:ellipsis;overflow:hidden;white-space:nowrap}
 
   @media (min-width: 923px) {
     .carousel{

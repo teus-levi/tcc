@@ -219,9 +219,7 @@
                                 </p>
                             </div>
                             <div class="card-footer">
-                                <a href="carrinho.html" class="btn btn-danger mt-2 d-block">
-                                    Adicionar ao Carrinho
-                                </a>
+                                @livewire('botao-carrinho-produto', ['produto' => $produto])
                                 <small class="text-success">{{$produto->quantidade}} em estoque</small>
                             </div>
                         </div>
