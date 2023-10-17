@@ -26,8 +26,7 @@ class BotaoCarrinhoProduto extends Component
         $this->emitTo('carrinho', 'refreshComponent');
     }
 
-
-
+   
     public function render()
     {
         return view('livewire.botao-carrinho-produto');

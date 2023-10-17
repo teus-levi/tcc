@@ -51,7 +51,10 @@ class LoginController extends Controller
         if (!Auth::attempt($request->only('email', 'password'))){
             return redirect()->back()->withErrors('Usuário/Senha inválido(s)');
         }
-            $produtos = Produto::paginate(6);
+            $produtos = DB::table('produtos')
+                ->join('estoques', 'produtos.id', '=', 'estoques.produto')
+                ->select('produtos.*', 'estoques.quantidade')
+                ->paginate(6);
             return view('principal.index', compact('produtos'));
 
     }

@@ -219,7 +219,7 @@
                                 </p>
                             </div>
                             <div class="card-footer">
-                                @livewire('botao-carrinho-produto', ['produto' => $produto])
+                                @livewire('botao-carrinho-produto', ['produto' => $produto->id])
                                 <small class="text-success">{{$produto->quantidade}} em estoque</small>
                             </div>
                         </div>
