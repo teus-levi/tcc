@@ -48,7 +48,7 @@ Route::post('/registrarEstoque/{id}', [RegistrarController::class, 'reg_estoque'
 Route::post('/salvarEstoque/{id}', [RegistrarController::class, 'store_estoque'])->name('salvarEstoque');
 
 Route::get('/listarProdutos', [ListarController::class, 'list_prod'])->name('listarProdutos');
-Route::post('/listarEstoque/{id}', [ListarController::class, 'list_estoque'])->name('listarEstoque');
+Route::get('/listarEstoque/{id}', [ListarController::class, 'list_estoque'])->name('listarEstoque');
 
 Route::post('/editarProduto/{id}', [EditarController::class, 'edit_prod'])->name('editarProduto');
 Route::post('/editarEstoque/{id}', [EditarController::class, 'edit_estoque'])->name('editarEstoque');

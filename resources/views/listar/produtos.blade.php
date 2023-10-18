@@ -62,7 +62,7 @@
                                     </th>
                                 </form>
                             @else
-                                <form action="/listarEstoque/{{ $item->id }}" method="POST">
+                                <form action="/listarEstoque/{{ $item->id }}" method="GET">
                                     @csrf
                                     <th>
                                     <button class="btn btn-warning btn-sm"> <i class="fa-solid fa-pen-to-square"></i>Listar</button>

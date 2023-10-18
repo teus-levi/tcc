@@ -80,9 +80,19 @@ class EditarController extends Controller
         if(Auth::check()){
             $produto = Produto::find($request->id);
             if($produto){
+                $estoque = Estoque::where('produto', $request->id)->get();
+                if($estoque){
+                    foreach ($estoque as $item) {
+                        $item->delete();
+                    }
+                    $produto->delete();
+                    $request->session()->flash('mensagem', "Produto e estoque deletado com sucesso!");
+                    return redirect()->back();
+                } else {
                 $produto->delete();
                 $request->session()->flash('mensagem', "Produto deletado com sucesso!");
                 return redirect()->back();
+                }
             }
         } else {
             return redirect('login');

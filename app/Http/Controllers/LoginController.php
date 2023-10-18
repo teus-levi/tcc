@@ -51,10 +51,20 @@ class LoginController extends Controller
         if (!Auth::attempt($request->only('email', 'password'))){
             return redirect()->back()->withErrors('Usuário/Senha inválido(s)');
         }
+        /*
             $produtos = DB::table('produtos')
                 ->join('estoques', 'produtos.id', '=', 'estoques.produto')
                 ->select('produtos.*', 'estoques.quantidade')
                 ->paginate(6);
+                */
+                $produtos = DB::table('produtos')
+                ->join('estoques', 'produtos.id', '=', 'estoques.produto')
+                ->whereNull('estoques.deleted_at')
+                ->whereNull('produtos.deleted_at', 'estoques.deleted_at')
+                ->select('produtos.*', DB::raw('SUM(estoques.quantidade) as quantidade'))
+                ->groupBy('produtos.id')
+                ->orderBy('estoques.produto', 'asc')->paginate(6);
+
             return view('principal.index', compact('produtos'));
 
     }
@@ -62,10 +72,19 @@ class LoginController extends Controller
     public function pos_cad(){
         if(Auth::check()){
             //$produtos = Produto::paginate(6);
+            /*
             $produtos = DB::table('produtos')
                         ->join('estoques', 'produtos.id', '=', 'estoques.produto')
                         ->select('produtos.*', 'estoques.quantidade')
                         ->paginate(6);
+                        */
+            $produtos = DB::table('produtos')
+                        ->join('estoques', 'produtos.id', '=', 'estoques.produto')
+                        ->whereNull('produtos.deleted_at')
+                        ->whereNull('estoques.deleted_at')
+                        ->select('produtos.*', DB::raw('SUM(estoques.quantidade) as quantidade'))
+                        ->groupBy('produtos.id')
+                        ->orderBy('estoques.produto', 'asc')->paginate(6);
             return view('principal.index', compact('produtos'));;
         } else{
             return redirect('/');

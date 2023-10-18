@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Promocoes extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'dataInicial', 'dataFinal', 'valorPromocao', 'produtoFarmacia_id'

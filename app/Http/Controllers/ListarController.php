@@ -41,6 +41,7 @@ class ListarController extends Controller
                             ->leftJoin('estoques', 'produtos.id', '=', 'estoques.produto')
                             ->join('categorias', 'categorias.id', '=', 'produtos.categoria')
                             ->join('marcas', 'marcas.id', '=', 'produtos.marca')
+                            ->whereNull('estoques.deleted_at')
                             ->whereNull('produtos.deleted_at')
                             ->select('produtos.*', DB::raw('SUM(estoques.quantidade) as quantidade'), 
                             'categorias.nome as n_categoria', 'marcas.nome as n_marca')
@@ -59,10 +60,18 @@ class ListarController extends Controller
         $est = DB::table('estoques')
         ->join('produtos', 'produtos.id', '=', 'estoques.produto')
         ->whereNull('estoques.deleted_at')
+        ->whereNull('produtos.deleted_at')
         ->where('estoques.produto', '=', $request->id)
         ->select('estoques.*', 'produtos.nome as n_produto')
         ->orderBy('estoques.id', 'desc')->get();
-        return view('listar.estoque', compact('est'));
+        foreach ($est as $item) {
+            if(!is_null($item)){
+                return view('listar.estoque', compact('est'));
+            }
+            return redirect('/');
+        }
+        
+
     }
 
 }
