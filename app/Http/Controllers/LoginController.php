@@ -60,7 +60,7 @@ class LoginController extends Controller
                 $produtos = DB::table('produtos')
                 ->join('estoques', 'produtos.id', '=', 'estoques.produto')
                 ->whereNull('estoques.deleted_at')
-                ->whereNull('produtos.deleted_at', 'estoques.deleted_at')
+                ->whereNull('produtos.deleted_at')
                 ->select('produtos.*', DB::raw('SUM(estoques.quantidade) as quantidade'))
                 ->groupBy('produtos.id')
                 ->orderBy('estoques.produto', 'asc')->paginate(6);

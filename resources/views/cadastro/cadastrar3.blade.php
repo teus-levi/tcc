@@ -28,7 +28,7 @@
                     </div>
                     <div class="textfield">
                         <label for="cep">CEP</label>
-                        <input type="number" name="cep" placeholder="CEP">
+                        <input id="cep" type="number" name="cep" placeholder="CEP">
                     </div>
                     <div class="textfield">
                         <label for="bairro">Bairro</label>
@@ -49,4 +49,9 @@
         </form>
     </div>
 </body>
+<script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js" integrity="sha512-pHVGpX7F/27yZ0ISY+VVjyULApbDlD0/X0rgGbTqCE7WFW5MezNTWG/dnhtbBuICzsd0WQPgpE4REBLv+UqChw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+    $('#cep').mask('00000-000');
+</script>
 </html>

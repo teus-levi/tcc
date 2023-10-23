@@ -32,7 +32,7 @@
                         <div class="form-group row">
                             <label for="precoVenda" class="col-2 mb-4 col-form-label">Preço de Venda</label>
                             <div class="col-10">
-                                <input class="form-control" type="number" value="{{$produto[0]->precoVendaAtual}}" id="precoVenda" name="precoVenda">
+                                <input class="form-control" type="text" value="{{$produto[0]->precoVendaAtual}}" id="precoVenda" name="precoVenda">
                             </div>
                         </div>
                         <div class="form-group row">
@@ -103,4 +103,10 @@
     <script>
     $('.dropify').dropify();
     </script>
+@endpush
+@push('formatar_script')
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js" integrity="sha512-pHVGpX7F/27yZ0ISY+VVjyULApbDlD0/X0rgGbTqCE7WFW5MezNTWG/dnhtbBuICzsd0WQPgpE4REBLv+UqChw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script>
+      $('#precoVenda').mask("#.##0,00", {reverse: true});
+  </script>
 @endpush

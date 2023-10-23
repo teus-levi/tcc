@@ -74,4 +74,30 @@ class ListarController extends Controller
 
     }
 
+    public function detalhe_prod(Request $request){
+        if(Auth::check()){
+            //$produto = Produto::find($request->id);
+            $produto = DB::table('produtos')
+                    ->join('marcas', 'produtos.marca', '=', 'marcas.id')
+                    ->join('estoques', 'produtos.id', '=', 'estoques.produto')
+                    ->whereNull('estoques.deleted_at')
+                    ->whereNull('produtos.deleted_at')
+                    ->where('produtos.id', '=', $request->id)
+                    ->select('produtos.*', DB::raw('SUM(estoques.quantidade) as quantidade'), 'marcas.nome as n_marca')
+                    ->groupBy('produtos.id')
+                    ->get();
+            $produtosCategoria = DB::table('produtos')
+                    ->join('categorias', 'produtos.categoria', '=', 'categorias.id')
+                    ->join('estoques', 'produtos.id', '=', 'estoques.produto')
+                    ->whereNull('estoques.deleted_at')
+                    ->whereNull('produtos.deleted_at')
+                    ->where('produtos.categoria', '=', $produto[0]->categoria)
+                    ->select('produtos.*', DB::raw('SUM(estoques.quantidade) as quantidade'))
+                    ->groupBy('produtos.id')
+                    ->orderBy('categorias.id')
+                    ->get();
+            return view('listar.detalheProduto', compact('produto', 'produtosCategoria'));
+        }
+    }
+
 }

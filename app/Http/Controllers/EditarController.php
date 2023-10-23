@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Models\Estoque;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class EditarController extends Controller
 {
@@ -43,6 +44,8 @@ class EditarController extends Controller
             //dd($request->hasFile('imagem'));
 
             if($request->hasFile('imagem')){
+                $produto = Produto::find($request->id);
+                Storage::delete($produto->imagem);
                 $img = $request->file('imagem')->store('produto');
                 $request->imagem = $img;
                 //dd($request->all());
@@ -55,7 +58,7 @@ class EditarController extends Controller
                     'descricao' => $request->descricao
                 ]);
                 $request->session()->flash('mensagem', "Produto editado com sucesso!");
-                return redirect('/editarProduto/{{$request->id}}');
+                return redirect()->route('listarProdutos');
             } else {
                 Produto::where('id', $request->id)->update([
                     'nome' => $request->nome,

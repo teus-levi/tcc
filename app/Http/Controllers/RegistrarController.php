@@ -47,6 +47,10 @@ class RegistrarController extends Controller
 
             $dados["imagem"] = $img;
 
+            //Formatar valor para o banco
+            $pontuacao = array(".", ",");
+            $dados['precoVendaAtual'] = str_replace($pontuacao, "", $dados['precoVendaAtual']);
+
             //dd($dados);
             Produto::create($dados);
             $request->session()->flash('mensagem', "Produto registrado com sucesso!");

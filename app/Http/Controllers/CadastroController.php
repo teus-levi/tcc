@@ -112,6 +112,12 @@ class CadastroController extends Controller
         //cadastrar no banco
         $user = User::create($data);
 
+        //formatando informações
+        $inf['cpf'] = str_replace(".", "", $inf['cpf']);
+        $inf['dataNascimento'] = str_replace("/", "-", $inf['dataNascimento']);
+        $telefone = array("(", ")", "-");
+        $inf['telefone'] = str_replace($telefone, "", $inf['telefone']);
+
         $cliente = new Cliente;
         $cliente->CPF = $inf['cpf'];
         $cliente->dataNascimento = $inf['dataNascimento'];

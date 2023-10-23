@@ -206,7 +206,7 @@
                             <a href="#" class="position-absolute end-0 p-2 text-danger">
                                 <i class="bi bi-suit-heart" style="font-size: 24px; line-height: 24px;"></i>
                             </a>
-                            <a href="/produto.html">
+                            <a href="/detalheProduto/{{$produto->id}}">
                                 <img src="storage/{{$produto->imagem}}" class="card-img-top">
                             </a>
                             <div class="card-header">
@@ -239,7 +239,7 @@
                 <div class="col mb-5">
                     <div class="card h-100">
                         <!-- Product image-->
-                        <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
+                        <img class="card-img-top" src="\imagens\product-4.jpg" alt="..." />
                         <!-- Product details-->
                         <div class="card-body p-4">
                             <div class="text-center">
