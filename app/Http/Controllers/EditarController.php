@@ -106,8 +106,12 @@ class EditarController extends Controller
 
     public function edit_estoque(Request $request){
         if(Auth::check()){
-            $estoque = Estoque::find($request->id);
-                                    
+            //$estoque = Estoque::find($request->id);
+            $estoque = DB::table('estoques')
+                    ->join('produtos', 'estoques.produto', '=', 'produtos.id')    
+                    ->where('estoques.id', '=', $request->id)
+                    ->select('estoques.*', 'produtos.nome as n_produto')
+                    ->get();                                
             return view('editar.estoque', compact('estoque'));
         } else{
             return redirect('/home');

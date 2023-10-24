@@ -154,6 +154,9 @@ class RegistrarController extends Controller
             }
             $dados["produto"] = $request->id;
             //dd($dados);
+            //Formatando preco
+            $pontuacao = array(".", ",");
+            $dados['precoCompra'] = str_replace($pontuacao, "", $dados['precoCompra']);
             Estoque::create($dados);
             $request->session()->flash('mensagem', "Estoque registrado com sucesso!");
             return redirect('listarProdutos');
