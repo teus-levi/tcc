@@ -28,7 +28,10 @@
                         <p class="product-price fs-4 mb-2 fw-bold">
                             
                                 <span class="product-price-final">
-                                    R${{$produto[0]->precoVendaAtual}}
+                                    R$
+                                    <span class="precoVendaAtual product-price-final">
+                                        {{$produto[0]->precoVendaAtual}}
+                                    </span>
                                 </span>
                             
                             
@@ -36,8 +39,6 @@
                         </p>
      
     <div class="form-wrapper mb-4 rounded bg-light p-6">
-        <form method="post" action="/cart/add" id="product_form_6138661372066" accept-charset="UTF-8" class="shopify-product-form" enctype="multipart/form-data" onsubmit="onSubmitAtcForm(this, event)"><input type="hidden" name="form_type" value="product"><input type="hidden" name="utf8" value="✓">
-            <input type="hidden" name="id" value="37815857545378">
             
             
 
@@ -56,22 +57,13 @@
                     
             
     
-            <div class="d-flex">
-                <input class="form-control me-3" type="number" name="quantity" value="1" aria-label="Quantity" style="max-width: 90px;">
-                <button class="btn-atc btn btn-primary w-100" type="submit" name="add" data-text-add-to-cart="Add to cart">
-                    
-                        Adicionar ao carrinho
-                    
-                </button>
-            </div>
+                        @livewire('botao-carrinho-produto', ['produto' => $produto[0]->id])
+            
     
             
                 <button class="btn-buy btn btn-outline-secondary w-100 mt-4" type="button" onclick="onClickBuyBtn(this, event)">
                     Comprar
                 </button>
-            
-    
-        <input type="hidden" name="product-id" value="6138661372066"></form>
     </div>
             <div id="product-accordion" class="accordion mb-5">
         
@@ -177,12 +169,14 @@
                                                 <!-- Product name-->
                                                 <h5 class="fw-bolder">{{$produtoCategoria->nome}}</h5>
                                                 <!-- Product price-->
-                                                R$ {{$produtoCategoria->precoVendaAtual}}
+                                                R$ <span class="precoVendaAtual">
+                                                {{$produtoCategoria->precoVendaAtual}}
+                                                </span>
                                             </div>
                                         </div>
                                         <!-- Product actions-->
                                         <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                            <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">Ver produto</a></div>
+                                            <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="/detalheProduto/{{$produtoCategoria->id}}">Ver produto</a></div>
                                         </div>
                                     </div>
                                 </div>
@@ -191,3 +185,9 @@
                     </div>
                 </section>
 @endsection
+@push('formatar_script')
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js" integrity="sha512-pHVGpX7F/27yZ0ISY+VVjyULApbDlD0/X0rgGbTqCE7WFW5MezNTWG/dnhtbBuICzsd0WQPgpE4REBLv+UqChw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script>
+      $('.precoVendaAtual').mask("#.##0,00", {reverse: true});
+  </script>
+@endpush

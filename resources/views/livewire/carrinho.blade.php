@@ -1,7 +1,13 @@
 <div class="btn-group">
+  <?php 
+  $quantidade = 0;
+  foreach(session('cart') as $id => $item){
+    $quantidade += $item['quantidade'];
+  }
+  ?>
     <button type="button" class="btn dropdown-toggle btn-sm" data-bs-toggle="dropdown" aria-expanded="false">
       <i class="fas fa-cart-plus" style="color: #ffffff;"></i>
-      <span class="badge bg-danger"> {{count((array) session('cart') )}} </span>
+      <span class="badge bg-danger"> {{$quantidade}} </span>
     </button>
     <ul class="dropdown-menu carrinho-scroll dropdown-cart">
       <li>
@@ -9,7 +15,7 @@
           <div class="cart-content">
             <h5>Rounded Chair</h5>  
           </div>
-          <div class="cart-img"><img src="imagens\anime" /></div>
+          <div class="cart-img"><img src="\imagens\anime" /></div>
           <small>$153</small>
                       
         </a>
@@ -21,7 +27,7 @@
           <div class="cart-content">
             <h5>{{$item['nome']}}</h5>  
           </div>
-          <div class="cart-img"><img src="storage/{{$item['imagem']}}" /></div>
+          <div class="cart-img"><img src="/storage/{{$item['imagem']}}" /></div>
           <small class="mr-5"> {{$item['quantidade']}} x R${{($item['quantidade'] * $item['preco'])}}</small>             
         </a>
       </li>
@@ -41,3 +47,6 @@
         
     </ul>
   </div>
+
+
+

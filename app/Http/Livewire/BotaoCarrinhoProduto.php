@@ -8,6 +8,8 @@ use App\Models\Produto;
 class BotaoCarrinhoProduto extends Component
 {
     public $produto;
+    public $carrinho;
+
 
     public function addProdutoCarrinho($id){
         $produto = Produto::find($id);

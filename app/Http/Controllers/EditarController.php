@@ -48,6 +48,9 @@ class EditarController extends Controller
                 Storage::delete($produto->imagem);
                 $img = $request->file('imagem')->store('produto');
                 $request->imagem = $img;
+                //Formatar valor para o banco
+                $pontuacao = array(".", ",");
+                $request->precoVenda = str_replace($pontuacao, "", $request->precoVenda);
                 //dd($request->all());
                 Produto::where('id', $request->id)->update([
                     'nome' => $request->nome,
@@ -60,6 +63,9 @@ class EditarController extends Controller
                 $request->session()->flash('mensagem', "Produto editado com sucesso!");
                 return redirect()->route('listarProdutos');
             } else {
+                //Formatar valor para o banco
+                $pontuacao = array(".", ",");
+                $request->precoVenda = str_replace($pontuacao, "", $request->precoVenda);
                 Produto::where('id', $request->id)->update([
                     'nome' => $request->nome,
                     'precoVendaAtual' => $request->precoVenda,
@@ -71,7 +77,7 @@ class EditarController extends Controller
                 //return redirect('/editarProduto/{{$request->id}}');
                 $id = $request->id;
 
-                return redirect()->route('editarProduto', [$id]);
+                return redirect()->route('listarProdutos');
             }
 
         } else{
@@ -124,34 +130,22 @@ class EditarController extends Controller
             //$validarImg = str_ireplace("produto/", "", $produto->imagem);
             //dd($request->hasFile('imagem'));
             /* FAZER VALIDAÇÃO DE NÃO EDITAR A QUANTIDADE PARA UM VALOR MENOR DO QUE FOI VENDIDO */
-            if(true){
-                $img = $request->file('imagem')->store('produto');
-                $request->imagem = $img;
                 //dd($request->all());
+                //Formatar valor para o banco
+                $pontuacao = array(".", ",");
+                $request->precoCompra = str_replace($pontuacao, "", $request->precoCompra);
+                //dd($request->all());
+                $estoque = Estoque::find($request->id);
+                //dd($estoque);
                 Estoque::where('id', $request->id)->update([
                     'quantidade' => $request->quantidade,
                     'precoCompra' => $request->precoCompra,
                     'lote' => $request->lote,
                     'validade' => $request->validade,
                 ]);
+                
                 $request->session()->flash('mensagem', "Estoque editado com sucesso!");
-                return redirect('/editarEstoque/{{$request->id}}');
-            } else {
-                Produto::where('id', $request->id)->update([
-                    'nome' => $request->nome,
-                    'precoVendaAtual' => $request->precoVenda,
-                    'categoria' => $request->categoria,
-                    'marca' => $request->marca,
-                    'descricao' => $request->descricao
-                ]);
-                $request->session()->flash('mensagem', "Produto editado com sucesso!");
-                //return redirect('/editarProduto/{{$request->id}}');
-                $id = $request->id;
-                Route::post('/user/profile', function () {
-
-                return redirect()->route('editarProduto', [$id]);
-                });
-            }
+                return redirect()->route('listarEstoque', [$estoque->produto]);
 
         } else{
             return redirect('login');
@@ -164,6 +158,39 @@ class EditarController extends Controller
             if($estoque){
                 $estoque->delete();
                 $request->session()->flash('mensagem', "Estoque deletado com sucesso!");
+                return redirect()->back();
+            }
+        } else {
+            return redirect('login');
+        }
+    }
+
+    public function edit_marca(Request $request){
+        if(Auth::check()){
+        $marca = Marca::find($request->id);
+        return view('editar.marcas', compact('marca'));
+        } else {
+            return redirect('login');
+        }
+    }
+    public function store_marca(Request $request){
+        if(Auth::check()){
+            Marca::where('id', $request->id)->update([
+                'nome' => $request->nome
+            ]);
+            $request->session()->flash('mensagem', "Marca editada com sucesso!");
+            return redirect('/listarMarcas');
+        } else {
+            return redirect('login');
+        }
+    }
+
+    public function delete_marca(Request $request){
+        if(Auth::check()){
+            $marca = Marca::find($request->id);
+            if($marca){
+                $marca->delete();
+                $request->session()->flash('mensagem', "Marca deletada com sucesso!");
                 return redirect()->back();
             }
         } else {

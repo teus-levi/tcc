@@ -100,4 +100,9 @@ class ListarController extends Controller
         }
     }
 
+    public function list_marcas(){
+        $marcas = Marca::query()->OrderBy('id')->paginate(10);
+        return view('listar.marcas', compact('marcas'));
+    }
+
 }

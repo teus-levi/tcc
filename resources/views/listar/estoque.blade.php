@@ -44,7 +44,7 @@
                         <th>{{$item->lote}}</th>
                         <th>{{$item->validade}}</th>
                         <th>
-                        <form action="/editarEstoque/{{ $item->id }}" method="POST">
+                        <form action="/editarEstoque/{{ $item->id }}" method="GET">
                             @csrf
                             <button class="btn btn-warning btn-sm mb-2"> <i class="fa-solid fa-pen-to-square"></i> Editar</button>
                         </form>
@@ -61,6 +61,26 @@
     </table>
 </div>
 @endsection
+@push('scripts')
+
+<script>
+      $('.deleteAlert').on('submit', function(e){
+    e.preventDefault();
+    swal({
+      title: "Atenção!",
+      text: "O estoque será deletado, deseja confirmar a exclusão?",
+      icon: "warning",
+      buttons: ["Cancelar", "Confirmar"],
+      dangerMode: true,
+    })
+    .then((willDelete) => {
+      if (willDelete) {
+        this.submit()
+      }
+    }); 
+  })
+</script>
+@endpush
 @push('formatar_script')
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js" integrity="sha512-pHVGpX7F/27yZ0ISY+VVjyULApbDlD0/X0rgGbTqCE7WFW5MezNTWG/dnhtbBuICzsd0WQPgpE4REBLv+UqChw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script>

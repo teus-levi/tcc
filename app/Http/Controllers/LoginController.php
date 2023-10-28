@@ -64,8 +64,8 @@ class LoginController extends Controller
                 ->select('produtos.*', DB::raw('SUM(estoques.quantidade) as quantidade'))
                 ->groupBy('produtos.id')
                 ->orderBy('estoques.produto', 'asc')->paginate(6);
-
-            return view('principal.index', compact('produtos'));
+                $carrinho = true;
+            return view('principal.index', compact('produtos', 'carrinho'));
 
     }
 
@@ -80,12 +80,17 @@ class LoginController extends Controller
                         */
             $produtos = DB::table('produtos')
                         ->join('estoques', 'produtos.id', '=', 'estoques.produto')
+                        ->join('marcas', 'produtos.marca', '=', 'marcas.id')
+                        ->join('categorias', 'produtos.categoria', '=', 'categorias.id')
                         ->whereNull('produtos.deleted_at')
                         ->whereNull('estoques.deleted_at')
+                        ->whereNull('categorias.deleted_at')
+                        ->whereNull('marcas.deleted_at')
                         ->select('produtos.*', DB::raw('SUM(estoques.quantidade) as quantidade'))
                         ->groupBy('produtos.id')
                         ->orderBy('estoques.produto', 'asc')->paginate(6);
-            return view('principal.index', compact('produtos'));;
+            $carrinho = true;
+            return view('principal.index', compact('produtos', 'carrinho'));;
         } else{
             return redirect('/');
         }

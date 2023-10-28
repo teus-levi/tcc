@@ -97,7 +97,7 @@
     e.preventDefault();
     swal({
       title: "Atenção!",
-      text: "O produto será deletado, deseja confirmar a exclusão?",
+      text: "O produto será deletado, juntamente com o estoque do mesmo. Deseja confirmar a exclusão?",
       icon: "warning",
       buttons: ["Cancelar", "Confirmar"],
       dangerMode: true,
