@@ -1,10 +1,14 @@
 <div class="btn-group">
   <?php 
   $quantidade = 0;
-  foreach(session('cart') as $id => $item){
-    $quantidade += $item['quantidade'];
-  }
+    if(Session::has('cart')){
+      foreach(session('cart') as $id => $item){
+      $quantidade += $item['quantidade'];
+      }
+    }
   ?>
+  
+  
     <button type="button" class="btn dropdown-toggle btn-sm" data-bs-toggle="dropdown" aria-expanded="false">
       <i class="fas fa-cart-plus" style="color: #ffffff;"></i>
       <span class="badge bg-danger"> {{$quantidade}} </span>
