@@ -1,18 +1,18 @@
 @extends('layout')
 
 @section('titulo')
-    BabyOn - Cadastro de Categorias
+    BabyOn - Cadastro de Categoria
 @endsection
 
 
 @section('conteudo')
 <h2 style="margin-left: 0%;" class="text-center">Categoria</h2>
-                    <p class="text-muted text-center mb-5">Faça a inclusão de uma nova categoria</p>
-    <form action="/registrarCategorias" method="post" enctype="multipart/form-data">
+                    <p class="text-muted text-center mb-5">Faça a edição da categoria</p>
+    <form action="/storeEditCategoria/{{$categoria->id}}" method="post" enctype="multipart/form-data">
         @csrf
         <div class="text-center mt-3">
-            <label for="nome">Nome da Categoria</label>
-            <input type="text" class="form-group" name="nome" id="nome">
+            <label for="nome">Nome:</label>
+            <input type="text" class="form-group" name="nome" id="nome" value="{{$categoria->nome}}">
         </div>
         <div class="text-center mt-3">
             <a href="/listarCategorias" class="btn btn-secondary mt-3">

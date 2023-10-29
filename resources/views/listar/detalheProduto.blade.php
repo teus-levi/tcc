@@ -1,7 +1,7 @@
 @extends('layout')
 
 @section('titulo')
-    BabyOn - Cadastro de Produtos
+    BabyOn - Detalhes do Produto
 @endsection
 
 

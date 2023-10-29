@@ -1,19 +1,19 @@
 @extends('layout')
 
 @section('titulo')
-    BabyOn - Lista de Marcas
+    BabyOn - Listagem de Categorias
 @endsection
 
 
 @section('conteudo')
 
 
-    <h2 style="margin-left: 0%;" class="text-center">Marcas</h2>
+    <h2 style="margin-left: 0%;" class="text-center">Categorias</h2>
     
 <div class="container">
     <div class="w-50 mx-auto">
     <div class="d-flex justify-content-end">
-    <form action="/registrarMarcas" method="get">
+    <form action="/registrarCategorias" method="get">
         <button class="btn btn-success">
             <i class="fa-solid fa-plus"></i>
         </button>
@@ -28,19 +28,19 @@
                 <th>Ação</th>
             </tr>
             <tbody>
-                @foreach ($marcas as $item)
+                @foreach ($categorias as $item)
                     <tr>
                         <th>{{$item->id}}</th>
                         <th>{{$item->nome}}</th>
                         <th class="d-flex">
                             <div class="me-4">
-                            <form action="/editarMarca/{{ $item->id }}" method="POST">
+                            <form action="/editarCategoria/{{ $item->id }}" method="POST">
                                 @csrf
                                 <button class="btn btn-warning btn-sm mb-2"> <i class="fa-solid fa-pen-to-square"></i> Editar</button>
                             </form>
                             </div>
                             <div>
-                            <form  class="deleteAlert" action="/removerMarca/{{ $item->id }}" method="POST">
+                            <form  class="deleteAlert" action="/removerCategoria/{{ $item->id }}" method="POST">
                                 @csrf
                                 <button type="submit" class="btn btn-danger btn-sm"> <i class="fas fa-trash"></i> Excluir</button>    
                             </form>
@@ -55,7 +55,7 @@
         </thead>
     </table>
     <div class="row pt-5">
-        {{$marcas->links()}}
+        {{$categorias->links()}}
     </div>
 </div>
 </div>
@@ -67,7 +67,7 @@
     e.preventDefault();
     swal({
       title: "Atenção!",
-      text: "A marca será deletada, e os produtos desta marca não serão listados após essa operação. Deseja confirmar a exclusão?",
+      text: "A categoria será deletada, e os produtos desta categoria não serão listados após essa operação. Deseja confirmar a exclusão?",
       icon: "warning",
       buttons: ["Cancelar", "Confirmar"],
       dangerMode: true,

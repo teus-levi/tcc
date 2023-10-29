@@ -43,7 +43,7 @@
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                   <li><a class="dropdown-item" href="{{ route('listarProdutos')}}">Produtos</a></li>
                   <li><a class="dropdown-item" href="{{ route('listarMarcas')}}">Marcas</a></li>
-                  <li><a class="dropdown-item" href="{{ route('registrarCategorias')}}">Categorias</a></li>
+                  <li><a class="dropdown-item" href="{{ route('listarCategorias')}}">Categorias</a></li>
                   <li><hr class="dropdown-divider"></li>
                   <li><a class="dropdown-item" href="{{ route('registrarAdministradores')}}">Administradores</a></li>
                 </ul>

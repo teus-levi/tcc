@@ -197,4 +197,37 @@ class EditarController extends Controller
             return redirect('login');
         }
     }
+
+    public function edit_categoria(Request $request){
+        if(Auth::check()){
+        $categoria = Categoria::find($request->id);
+        return view('editar.categorias', compact('categoria'));
+        } else {
+            return redirect('login');
+        }
+    }
+    public function store_categoria(Request $request){
+        if(Auth::check()){
+            Categoria::where('id', $request->id)->update([
+                'nome' => $request->nome
+            ]);
+            $request->session()->flash('mensagem', "Categoria editada com sucesso!");
+            return redirect('/listarCategorias');
+        } else {
+            return redirect('login');
+        }
+    }
+
+    public function delete_categoria(Request $request){
+        if(Auth::check()){
+            $categoria = Categoria::find($request->id);
+            if($categoria){
+                $categoria->delete();
+                $request->session()->flash('mensagem', "Categoria deletada com sucesso!");
+                return redirect()->back();
+            }
+        } else {
+            return redirect('login');
+        }
+    }
 }

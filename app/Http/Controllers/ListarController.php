@@ -105,4 +105,9 @@ class ListarController extends Controller
         return view('listar.marcas', compact('marcas'));
     }
 
+    public function list_categorias(){
+        $categorias = Categoria::query()->OrderBy('id')->paginate(10);
+        return view('listar.categorias', compact('categorias'));
+    }
+
 }

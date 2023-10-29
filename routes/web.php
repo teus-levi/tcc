@@ -49,19 +49,23 @@ Route::post('/salvarEstoque/{id}', [RegistrarController::class, 'store_estoque']
 
 Route::get('/listarProdutos', [ListarController::class, 'list_prod'])->name('listarProdutos');
 Route::get('/listarMarcas', [ListarController::class, 'list_marcas'])->name('listarMarcas');
+Route::get('/listarCategorias', [ListarController::class, 'list_categorias'])->name('listarCategorias');
 Route::get('/detalheProduto/{id}', [ListarController::class, 'detalhe_prod'])->name('detalheProduto');
 Route::get('/listarEstoque/{id}', [ListarController::class, 'list_estoque'])->name('listarEstoque');
 
 Route::post('/editarProduto/{id}', [EditarController::class, 'edit_prod'])->name('editarProduto');
 Route::post('/editarMarca/{id}', [EditarController::class, 'edit_marca'])->name('editarMarca');
+Route::post('/editarCategoria/{id}', [EditarController::class, 'edit_categoria'])->name('editarCategoria');
 Route::get('/editarEstoque/{id}', [EditarController::class, 'edit_estoque'])->name('editarEstoque');
 Route::post('/storeEditProduto/{id}', [EditarController::class, 'store_prod'])->name('salvarEditProduto');
 Route::post('/storeEditMarca/{id}', [EditarController::class, 'store_marca'])->name('salvarEditMarca');
+Route::post('/storeEditCategoria/{id}', [EditarController::class, 'store_categoria'])->name('salvarEditCategoria');
 Route::post('/storeEditEstoque/{id}', [EditarController::class, 'store_estoque'])->name('salvarEditEstoque');
 
 Route::post('/removerProduto/{id}', [EditarController::class, 'delete_prod'])->name('removerProduto');
 Route::post('/removerEstoque/{id}', [EditarController::class, 'delete_estoque'])->name('removerEstoque');
-Route::post('/removerMarca/{id}', [EditarController::class, 'delete_marca'])->name('removerEstoque');
+Route::post('/removerMarca/{id}', [EditarController::class, 'delete_marca'])->name('removerMarca');
+Route::post('/removerCategoria/{id}', [EditarController::class, 'delete_categoria'])->name('removerCategoria');
 
 
 
