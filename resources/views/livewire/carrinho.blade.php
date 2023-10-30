@@ -38,9 +38,9 @@
       @endforeach
 
       <div class="d-flex justify-content-center">
-        <form action="#">
+        <a href="/carrinho">
             <button class=" m-3 btn btn-warning btn-sm">Ver o carrinho</button>
-        </form>
+        </a>
       </div>
       
       @else

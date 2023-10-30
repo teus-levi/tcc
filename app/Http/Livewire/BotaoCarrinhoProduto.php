@@ -18,6 +18,7 @@ class BotaoCarrinhoProduto extends Component
             $cart[$id]['quantidade']++;
         } else {
             $cart[$id] = [
+                "id" => $produto->id,
                 "nome" => $produto->nome,
                 "quantidade" => 1,
                 "preco" => $produto->precoVendaAtual,

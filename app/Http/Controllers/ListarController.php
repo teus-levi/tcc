@@ -110,4 +110,8 @@ class ListarController extends Controller
         return view('listar.categorias', compact('categorias'));
     }
 
+    public function list_carrinho(){
+        return view('listar.carrinho');
+    }
+
 }

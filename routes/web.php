@@ -52,6 +52,7 @@ Route::get('/listarMarcas', [ListarController::class, 'list_marcas'])->name('lis
 Route::get('/listarCategorias', [ListarController::class, 'list_categorias'])->name('listarCategorias');
 Route::get('/detalheProduto/{id}', [ListarController::class, 'detalhe_prod'])->name('detalheProduto');
 Route::get('/listarEstoque/{id}', [ListarController::class, 'list_estoque'])->name('listarEstoque');
+Route::get('/carrinho', [ListarController::class, 'list_carrinho'])->name('listarCarrinho');
 
 Route::post('/editarProduto/{id}', [EditarController::class, 'edit_prod'])->name('editarProduto');
 Route::post('/editarMarca/{id}', [EditarController::class, 'edit_marca'])->name('editarMarca');
