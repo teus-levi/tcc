@@ -230,4 +230,9 @@ class EditarController extends Controller
             return redirect('login');
         }
     }
+
+    public function confirmar_endereco(){
+        return view('editar.confirmarEndereco');
+    }
+
 }

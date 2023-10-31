@@ -62,6 +62,7 @@ Route::post('/storeEditProduto/{id}', [EditarController::class, 'store_prod'])->
 Route::post('/storeEditMarca/{id}', [EditarController::class, 'store_marca'])->name('salvarEditMarca');
 Route::post('/storeEditCategoria/{id}', [EditarController::class, 'store_categoria'])->name('salvarEditCategoria');
 Route::post('/storeEditEstoque/{id}', [EditarController::class, 'store_estoque'])->name('salvarEditEstoque');
+Route::get('/confirmarEndereco', [EditarController::class, 'confirmar_endereco'])->name('confirmarEndereco');
 
 Route::post('/removerProduto/{id}', [EditarController::class, 'delete_prod'])->name('removerProduto');
 Route::post('/removerEstoque/{id}', [EditarController::class, 'delete_estoque'])->name('removerEstoque');

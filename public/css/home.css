@@ -90,6 +90,8 @@ h2{
 .dropdown-alerts li.divider,.dropdown-tasks li.divider{margin:0}
 .list-style-none li.divider{margin:10px 0;height:1px;background:rgba(120,130,140,.13)}
 cart-content{display:inline-block;vertical-align:middle}.dropdown-cart .cart-content h5{margin:0;font-weight:500;text-overflow:ellipsis;overflow:hidden;white-space:nowrap}
+/*ícones do formulário*/
+.input-group-addon{border-radius:2px;border:1px solid rgba(120,130,140,.13);width: 2.5em;}
 
   @media (min-width: 923px) {
     .carousel{

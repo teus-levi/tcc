@@ -114,4 +114,6 @@ class ListarController extends Controller
         return view('listar.carrinho');
     }
 
+    
+
 }

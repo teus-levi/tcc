@@ -50,7 +50,7 @@
                     <a href="/home" class="btn btn-outline-success btn-lg">
                         Continuar Comprando                            
                     </a>
-                    <a href="/fechamento_itens.html" class="btn btn-danger btn-lg ms-2 mt-xs-3">Fechar Compra</a>
+                    <a href="/confirmarEndereco" class="btn btn-danger btn-lg ms-2 mt-xs-3">Fechar Compra</a>
                 </div>
             </li>
         </ul>
