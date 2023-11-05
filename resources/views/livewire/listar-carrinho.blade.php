@@ -16,7 +16,7 @@
                                         {{$item['nome']}}</a></b>
                             </h4>
                             <h5>
-                                Marca:
+                                Marca: {{$item['marca']}}
                             </h5>
                         </div>
                         <div
@@ -34,8 +34,8 @@
                                 </button>
                             </div>
                             <div class="text-end mt-2">
-                                <small class="text-secondary">Valor Item: R$ <span class="preco">{{$item['preco']}}</span></small><br>
-                                <span class="text-dark">Valor total: R$ <span class="preco">{{$item['preco'] * $item['quantidade']}}</span></span>
+                                <small class="text-secondary">Valor Item: R$ <span class="">{{number_format(($item['preco']) / 100, 2, ",", ".")}}</span></small><br>
+                                <span class="text-dark">Valor total: R$ <span class="">{{number_format(($item['preco'] * $item['quantidade']) / 100, 2, ",", ".")}}</span></span>
                                 
                             </div>
                         </div>
@@ -45,7 +45,7 @@
             <li class="list-group-item py-3">
                 <div class="text-end">
                     <h4 class="text-dark mb-3">
-                        Valor Total: R$ <span class="preco">{{$total}}</span>
+                        Valor Total: R$ <span class="preco">{{number_format(($total) / 100, 2, ",", ".")}}</span>
                     </h4>
                     <a href="/home" class="btn btn-outline-success btn-lg">
                         Continuar Comprando                            
@@ -57,8 +57,10 @@
     </div>
 </div>
 @push('formatar_script')
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js" integrity="sha512-pHVGpX7F/27yZ0ISY+VVjyULApbDlD0/X0rgGbTqCE7WFW5MezNTWG/dnhtbBuICzsd0WQPgpE4REBLv+UqChw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script>
-      $('.preco').mask("#.##0,00", {reverse: true});
-  </script>
+    $('.preco').mask("#.##0,00", {reverse: true});
+
+</script>
 @endpush

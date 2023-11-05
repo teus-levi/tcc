@@ -4,6 +4,7 @@ namespace App\Http\Livewire;
 
 use Livewire\Component;
 use App\Models\Produto;
+use App\Models\Marca;
 
 class BotaoCarrinhoProduto extends Component
 {
@@ -13,6 +14,7 @@ class BotaoCarrinhoProduto extends Component
 
     public function addProdutoCarrinho($id){
         $produto = Produto::find($id);
+        $marca = Marca::find($produto->marca);
         $cart = session()->get('cart', []);
         if(isset($cart[$id])){
             $cart[$id]['quantidade']++;
@@ -20,6 +22,7 @@ class BotaoCarrinhoProduto extends Component
             $cart[$id] = [
                 "id" => $produto->id,
                 "nome" => $produto->nome,
+                "marca" => $marca->nome,
                 "quantidade" => 1,
                 "preco" => $produto->precoVendaAtual,
                 "imagem" => $produto->imagem

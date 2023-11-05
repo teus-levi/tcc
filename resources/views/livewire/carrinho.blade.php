@@ -32,7 +32,7 @@
             <h5>{{$item['nome']}}</h5>  
           </div>
           <div class="cart-img"><img src="/storage/{{$item['imagem']}}" /></div>
-          <small class="mr-5"> {{$item['quantidade']}} x R${{($item['quantidade'] * $item['preco'])}}</small>             
+          <small class="mr-5"> {{$item['quantidade']}} x R${{(number_format(($item['quantidade'] * $item['preco']) / 100, 2, ",", "."))}}</small>             
         </a>
       </li>
       @endforeach
