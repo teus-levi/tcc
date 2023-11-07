@@ -14,16 +14,6 @@
       <span class="badge bg-danger"> {{$quantidade}} </span>
     </button>
     <ul class="dropdown-menu carrinho-scroll dropdown-cart">
-      <li>
-        <a class="dropdown-item" href="#">
-          <div class="cart-content">
-            <h5>Rounded Chair</h5>  
-          </div>
-          <div class="cart-img"><img src="\imagens\anime" /></div>
-          <small>$153</small>
-                      
-        </a>
-      </li>
       @if(session('cart'))
       @foreach (session('cart') as $id => $item)
       <li>
@@ -44,9 +34,9 @@
       </div>
       
       @else
-      <div class="d-flex justify-content-center">
-        <small>Sem produtos no carrinho</small>
-      </div>
+      <li class="d-flex align-items-center justify-content-center"style="height: 50px;">
+        <small class="">Sem produtos no carrinho</small>
+      </li>
         @endif
         
     </ul>

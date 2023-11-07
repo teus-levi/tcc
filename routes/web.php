@@ -53,6 +53,7 @@ Route::get('/listarCategorias', [ListarController::class, 'list_categorias'])->n
 Route::get('/detalheProduto/{id}', [ListarController::class, 'detalhe_prod'])->name('detalheProduto');
 Route::get('/listarEstoque/{id}', [ListarController::class, 'list_estoque'])->name('listarEstoque');
 Route::get('/carrinho', [ListarController::class, 'list_carrinho'])->name('listarCarrinho');
+Route::get('/pedidos', [ListarController::class, 'list_pedidos'])->name('listarPedidos');
 
 Route::post('/editarProduto/{id}', [EditarController::class, 'edit_prod'])->name('editarProduto');
 Route::post('/editarMarca/{id}', [EditarController::class, 'edit_marca'])->name('editarMarca');
@@ -62,7 +63,13 @@ Route::post('/storeEditProduto/{id}', [EditarController::class, 'store_prod'])->
 Route::post('/storeEditMarca/{id}', [EditarController::class, 'store_marca'])->name('salvarEditMarca');
 Route::post('/storeEditCategoria/{id}', [EditarController::class, 'store_categoria'])->name('salvarEditCategoria');
 Route::post('/storeEditEstoque/{id}', [EditarController::class, 'store_estoque'])->name('salvarEditEstoque');
+Route::POST('/storePerfil/{id}', [EditarController::class, 'store_perfil'])->name('salvarPerfil');
+Route::POST('/storeEndereco/{id}', [EditarController::class, 'store_endereco'])->name('salvarEndereco');
+Route::POST('/storeSenha', [EditarController::class, 'store_senha'])->name('salvarSenha');
 Route::get('/confirmarEndereco', [EditarController::class, 'confirmar_endereco'])->name('confirmarEndereco');
+Route::get('/perfil', [EditarController::class, 'edit_perfil'])->name('editarPerfil');
+Route::get('/endereco', [EditarController::class, 'edit_endereco'])->name('editarEndereco');
+Route::get('/senha', [EditarController::class, 'edit_senha'])->name('editarSenha');
 
 Route::post('/removerProduto/{id}', [EditarController::class, 'delete_prod'])->name('removerProduto');
 Route::post('/removerEstoque/{id}', [EditarController::class, 'delete_estoque'])->name('removerEstoque');

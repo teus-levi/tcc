@@ -37,7 +37,7 @@
                             <div class="col-10">
                                 <div class="form-floating mx-auto d-block mb-4">
                                     <!-- Usando select2 para poder ter a opção de pesquisa-->
-                                    <select class="form-select" id="single-select-field" name="categoria">
+                                    <select class="form-select single-select-field" name="categoria">
                                         <option value="" selected></option>
                                           <?php
                                 
@@ -56,7 +56,7 @@
                                 <div class="form-floating mx-auto d-block mb-4">
 
                                     <!-- Usando select2 para poder ter a opção de pesquisa-->
-                                    <select class="form-select" id="single-select-field" name="marca">
+                                    <select class="form-select single-select-field" name="marca">
                                         <option value="" selected></option>
                                           <?php
                                 

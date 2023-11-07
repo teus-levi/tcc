@@ -114,6 +114,10 @@ class ListarController extends Controller
         return view('listar.carrinho');
     }
 
+    public function list_pedidos(){
+        return view('listar.pedidos');
+    }
+
     
 
 }

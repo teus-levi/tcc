@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Models\Estoque;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 
 class EditarController extends Controller
@@ -233,6 +234,130 @@ class EditarController extends Controller
 
     public function confirmar_endereco(){
         return view('editar.confirmarEndereco');
+    }
+    public function edit_endereco(){
+        if(Auth::check()){
+            $id = Auth::id();
+            $endereco = Cliente::where('usuario', $id)->get();
+            return view('editar.endereco', compact('endereco'));
+        } else {
+            return redirect('login');
+        }
+    }
+    public function store_endereco(Request $request){
+        $id = Auth::id();
+        if(Auth::check() && $id == $request->id){
+            //formatando informações
+            //dd($request->all());
+            $cep = preg_replace("/[^0-9]/", "", $request->cep);
+            $resposta = Http::get('https://viacep.com.br/ws/'.$cep.'/json/');
+            $dadosApi = $resposta->json();
+            if(!empty($dadosApi['erro'])){
+                $request->session()->flash('erro', "O CEP está incorreto, por isso o endereço informado não foi salvo. Tente novamente.");
+            } elseif(!empty($dadosApi['logradouro'])){
+                //update no banco
+                Cliente::where('usuario', $request->id)->update([
+                    'CEP' => $cep,
+                    'estado' => $dadosApi['uf'],
+                    'cidade' => $dadosApi['localidade'],
+                    'bairro' => $dadosApi['bairro'],
+                    'logradouro' => $dadosApi['logradouro'],
+                    'numero' => $request->numero
+                ]);
+                $request->session()->flash('mensagem', "Endereço editado com sucesso!");
+            } else{
+                if(is_null($request->logradouro)){
+                    $request->session()->flash('erro', "Preencha o campo de logradouro!");
+                } else{
+                    //update no banco
+                    Cliente::where('usuario', $request->id)->update([
+                        'CEP' => $cep,
+                        'estado' => $dadosApi['uf'],
+                        'cidade' => $dadosApi['localidade'],
+                        'bairro' => $request->bairro,
+                        'logradouro' => $request->logradouro,
+                        'numero' => $request->numero
+                    ]);
+                    $request->session()->flash('mensagem', "Endereço editado com sucesso!");
+                }
+                
+            }
+            return redirect('/endereco');
+        } else {
+            return redirect('login');
+        }
+    }
+    public function edit_senha(){
+        if(Auth::check()){
+            return view('editar.senha');
+        } else{
+            return redirect('login');
+        }
+    }
+
+    public function store_senha(Request $request){
+        if(Auth::check()){
+            //validando informações
+            //dd($request->all());
+            if (!Auth::attempt($request->only('password'))){
+                $request->session()->flash('erro', "A senha não condiz com a senha atual.");
+                return redirect('/senha');
+            } elseif($request->senhaNova == $request->confirmarSenha) {
+                //update no banco
+                $id = Auth::id();
+                $senha = Hash::make($request->senhaNova);
+                User::where('id', $id)->update([
+                    'password' => $senha
+                ]);
+                $request->session()->flash('mensagem', "Senha editada com sucesso!");
+                return redirect('/senha');
+            }else {
+                $request->session()->flash('erro', "A confirmação da senha não condiz com a nova senha.");
+                return redirect('/senha');
+            }
+            
+        } else {
+            return redirect('login');
+        }
+    }
+
+    public function edit_perfil(){
+        if(Auth::check()){
+            $id = Auth::id();
+            $perfil = DB::table('users')
+            ->join('clientes', 'users.id', '=', 'clientes.usuario')
+            ->where('users.id', '=', $id)
+            ->select('users.name', 'clientes.*')
+            ->get();
+            return view('editar.perfil', compact('perfil'));
+        } else {
+            return redirect('login');
+        }
+    }
+
+    public function store_perfil(Request $request){
+        $id = Auth::id();
+        if(Auth::check() && $id == $request->id){
+            //formatando informações
+            //dd($request->all());
+            $cpf = array(".", "-");
+            $request->CPF = str_replace($cpf, "", $request->CPF);
+            $telefone = array("(", ")", "-", " ");
+            $request->telefone = str_replace($telefone, "", $request->telefone);
+            //update no banco
+            Cliente::where('usuario', $request->id)->update([
+                'CPF' => $request->CPF,
+                'telefone' => $request->telefone,
+                'dataNascimento' => $request->dataNascimento
+            ]);
+            User::where('id', $request->id)->update([
+                'name' => $request->nome
+            ]);
+            $request->session()->flash('mensagem', "Perfil editado com sucesso!");
+            return redirect('/perfil');
+        } else {
+            return redirect('login');
+        }
     }
 
 }
