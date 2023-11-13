@@ -12,7 +12,7 @@ class ItensVenda extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'quantidade', 'valorUnitario', 'venda_id', 'produtofarmacia_id'
+        'produto', 'quantidade', 'valorUnitario', 'venda'
     ];
 
     /**

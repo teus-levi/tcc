@@ -9,4 +9,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Venda extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'modoRecebimento', 'parcelas', 'saldoReceber', 'vencimento', 'nomeRecebedor', 'logradouro', 'numero', 'CEP', 'bairro', 'cidade', 'estado', 'statusEntrega', 'cliente'
+    ];
 }

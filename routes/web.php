@@ -46,6 +46,7 @@ Route::post('/registrarAdministradores/{id}', [RegistrarController::class, 'stor
 Route::post('/removerAdministradores/{id}', [RemoverController::class, 'destroy_administradores'])->name('removerAdministrador');
 Route::post('/registrarEstoque/{id}', [RegistrarController::class, 'reg_estoque'])->name('registrarEstoque');
 Route::post('/salvarEstoque/{id}', [RegistrarController::class, 'store_estoque'])->name('salvarEstoque');
+Route::post('/registrarCompra', [RegistrarController::class, 'reg_compra'])->name('registrarCompra');
 
 Route::get('/listarProdutos', [ListarController::class, 'list_prod'])->name('listarProdutos');
 Route::get('/listarMarcas', [ListarController::class, 'list_marcas'])->name('listarMarcas');
@@ -54,6 +55,7 @@ Route::get('/detalheProduto/{id}', [ListarController::class, 'detalhe_prod'])->n
 Route::get('/listarEstoque/{id}', [ListarController::class, 'list_estoque'])->name('listarEstoque');
 Route::get('/carrinho', [ListarController::class, 'list_carrinho'])->name('listarCarrinho');
 Route::get('/pedidos', [ListarController::class, 'list_pedidos'])->name('listarPedidos');
+Route::get('/formaPagamento', [ListarController::class, 'list_pagamento'])->name('formaPagamento');
 
 Route::post('/editarProduto/{id}', [EditarController::class, 'edit_prod'])->name('editarProduto');
 Route::post('/editarMarca/{id}', [EditarController::class, 'edit_marca'])->name('editarMarca');

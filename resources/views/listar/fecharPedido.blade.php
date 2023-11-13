@@ -9,11 +9,11 @@
 
 <main class="flex-fill">
     <div class="container text-center">
-        <h1>Obrigado!</h1>
+        <h1>Finalizado!</h1>
         <hr>
         <h3>Anote o número de seu pedido:</h3>
-        <div class="text-danger"><b>004571</b></div>
-        <p>Em até 2 horas, seu pedido será entregue. Quaisquer dúvidas sobre este pedido, entre em contato conosco informando o número do pedido.</p>
+        <div class="text-danger h2"><b>{{$venda->id}}</b></div>
+        <p>Em até 2 horas, seu pedido será entregue. Quaisquer dúvidas sobre este pedido, entre em contato conosco informando o número da compra.</p>
         <p>
             Atenciosamente,<br>
             BabyOn

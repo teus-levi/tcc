@@ -82,7 +82,7 @@ class EditarController extends Controller
             }
 
         } else{
-            return redirect('login');
+            return redirect()->route('login');
         }
     }
 
@@ -105,7 +105,7 @@ class EditarController extends Controller
                 }
             }
         } else {
-            return redirect('login');
+            return redirect()->route('login');
         }
     }
 
@@ -149,7 +149,7 @@ class EditarController extends Controller
                 return redirect()->route('listarEstoque', [$estoque->produto]);
 
         } else{
-            return redirect('login');
+            return redirect()->route('login');
         }
     }
 
@@ -162,7 +162,7 @@ class EditarController extends Controller
                 return redirect()->back();
             }
         } else {
-            return redirect('login');
+            return redirect()->route('login');
         }
     }
 
@@ -171,7 +171,7 @@ class EditarController extends Controller
         $marca = Marca::find($request->id);
         return view('editar.marcas', compact('marca'));
         } else {
-            return redirect('login');
+            return redirect()->route('login');
         }
     }
     public function store_marca(Request $request){
@@ -182,7 +182,7 @@ class EditarController extends Controller
             $request->session()->flash('mensagem', "Marca editada com sucesso!");
             return redirect('/listarMarcas');
         } else {
-            return redirect('login');
+            return redirect()->route('login');
         }
     }
 
@@ -195,7 +195,7 @@ class EditarController extends Controller
                 return redirect()->back();
             }
         } else {
-            return redirect('login');
+            return redirect()->route('login');
         }
     }
 
@@ -204,7 +204,7 @@ class EditarController extends Controller
         $categoria = Categoria::find($request->id);
         return view('editar.categorias', compact('categoria'));
         } else {
-            return redirect('login');
+            return redirect()->route('login');
         }
     }
     public function store_categoria(Request $request){
@@ -215,7 +215,7 @@ class EditarController extends Controller
             $request->session()->flash('mensagem', "Categoria editada com sucesso!");
             return redirect('/listarCategorias');
         } else {
-            return redirect('login');
+            return redirect()->route('login');
         }
     }
 
@@ -228,12 +228,21 @@ class EditarController extends Controller
                 return redirect()->back();
             }
         } else {
-            return redirect('login');
+            return redirect()->route('login');
         }
     }
-
+    //confirmação do endereço para salvar na entrega
     public function confirmar_endereco(){
-        return view('editar.confirmarEndereco');
+        if(Auth::check()){
+            $id = Auth::id();
+            $usuario = DB::table('users')
+            ->where('users.id', '=', $id)
+            ->select('users.name', 'users.id')
+            ->get();
+            return view('editar.confirmarEndereco', compact('usuario'));
+        } else {
+            return redirect()->route('login');
+        }
     }
     public function edit_endereco(){
         if(Auth::check()){
@@ -241,7 +250,7 @@ class EditarController extends Controller
             $endereco = Cliente::where('usuario', $id)->get();
             return view('editar.endereco', compact('endereco'));
         } else {
-            return redirect('login');
+            return redirect()->route('login');
         }
     }
     public function store_endereco(Request $request){
@@ -284,14 +293,14 @@ class EditarController extends Controller
             }
             return redirect('/endereco');
         } else {
-            return redirect('login');
+            return redirect()->route('login');
         }
     }
     public function edit_senha(){
         if(Auth::check()){
             return view('editar.senha');
         } else{
-            return redirect('login');
+            return redirect()->route('login');
         }
     }
 
@@ -317,7 +326,7 @@ class EditarController extends Controller
             }
             
         } else {
-            return redirect('login');
+            return redirect()->route('login');
         }
     }
 
@@ -331,7 +340,7 @@ class EditarController extends Controller
             ->get();
             return view('editar.perfil', compact('perfil'));
         } else {
-            return redirect('login');
+            return redirect()->route('login');
         }
     }
 
@@ -356,7 +365,7 @@ class EditarController extends Controller
             $request->session()->flash('mensagem', "Perfil editado com sucesso!");
             return redirect('/perfil');
         } else {
-            return redirect('login');
+            return redirect()->route('login');
         }
     }
 

@@ -29,6 +29,7 @@
             </div>
             <div class="col-8">
                 <form class="col-sm-12 col-md-8 col-lg-6" action="/storeSenha" method="POST">
+                    @csrf
                     <div class="form-floating mb-3">
                         <input type="password" id="txtSenhaAtual" class="form-control" placeholder=" " autofocus>
                         <label for="txtSenhaAtual">Digite aqui sua senha atual</label>

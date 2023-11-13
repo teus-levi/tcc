@@ -118,6 +118,13 @@ class ListarController extends Controller
         return view('listar.pedidos');
     }
 
+    public function list_pagamento(Request $request){
+        $itens = $request->all();
+        $request->session()->put('compra', $itens);
+        
+        return view('listar.formaPagamento');
+    }
+
     
 
 }
