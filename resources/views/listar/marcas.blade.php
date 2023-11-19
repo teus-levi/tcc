@@ -54,8 +54,10 @@
             </tbody>
         </thead>
     </table>
-    <div class="row pt-5">
-        {{$marcas->links()}}
+    <div class="d-flex justify-content-center mb-5">
+        <div class="row pt-5">
+            {{$marcas->links()}}
+        </div>
     </div>
 </div>
 </div>

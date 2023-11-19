@@ -71,7 +71,7 @@
                                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                                             data-bs-target="#{{$item->id}}">
                                             <b>Pedido código #{{$item->id}}</b>
-                                            <span class="mx-1">(realizado em {{$item->created_at->format('d/m/Y')}})</span>
+                                            <span class="mx-1">(realizado em {{$item->created_at->format('d/m/Y') }})</span>
                                         </button>
                                     </div>
                                     <div id="{{$item->id}}" class="accordion-collapse collapse" data-bs-parent="#divPedidos">
@@ -131,12 +131,16 @@
                     </div>
                 @endif
                 @if (isset($filtros))
-                    <div class="row pt-5">
-                        {{$pedidos->appends($filtros)->links()}}
+                    <div class="d-flex justify-content-center mb-5">
+                        <div class="row pt-5">
+                            {{$pedidos->appends($filtros)->links()}}
+                        </div>
                     </div>
                 @else
-                    <div class="row pt-5">
-                        {{$pedidos->links()}}
+                    <div class="d-flex justify-content-center mb-5">
+                        <div class="row pt-5">
+                            {{$pedidos->links()}}
+                        </div>
                     </div>
                 @endif
                 

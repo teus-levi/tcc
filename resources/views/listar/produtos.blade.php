@@ -85,9 +85,12 @@
             </tbody>
         </thead>
     </table>
-    <div class="row pt-5">
-        {{$produtos->links()}}
+    <div class="d-flex justify-content-center mb-5">
+        <div class="row pt-5">
+            {{$produtos->links()}}
+        </div>
     </div>
+    
 </div>
 @endsection
 @push('scripts')
