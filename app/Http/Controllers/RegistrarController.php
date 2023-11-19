@@ -179,6 +179,7 @@ class RegistrarController extends Controller
             if(!is_null($dados['descricao'])){
                 $venda->descricao = $dados['descricao'];
             }
+
             $venda->modoRecebimento = $dados['flexRadioDefault'];
             
             $venda->nomeRecebedor = $dados['nomeRecebedor'];
@@ -216,8 +217,28 @@ class RegistrarController extends Controller
             foreach (session('cart') as $id => $item) {
                 $produto = Produto::find($item['id']);
                 if(!is_null($produto)){
-                    $produtoVenda = ['produto' => $produto->id, 'quantidade' => $item['quantidade'], 'valorUnitario' => $produto->precoVendaAtual, 'venda' => $venda->id];
-                    $itensVenda = ItensVenda::create($produtoVenda);
+                $produtoQtd = $produto->getEstoques[0]->quantidade;
+                    if($produtoQtd >= $item['quantidade']){
+                        //Criando registro na tabela ItensVendas
+                        $produtoVenda = ['produto' => $produto->id, 'quantidade' => $item['quantidade'], 'valorUnitario' => $produto->precoVendaAtual, 'venda' => $venda->id];
+                        $itensVenda = ItensVenda::create($produtoVenda);
+                        //Modificando quantidade na tabela do produto, pegando o estoque mais antigo que não seja preenchido o campo de delete
+                        $quantidade = $produtoQtd - $item['quantidade'];
+                        Estoque::where('id', $produto->getEstoques[0]->id)->update([
+                            'quantidade' => $quantidade
+                        ]);
+                        if($quantidade == 0){
+                            //o get pode trazer mais de 1 objeto, o first traria valor único
+                            //também poderia usar o delete na frente da collection
+                            $estoqueVazio = Estoque::where('id', $produto->getEstoques[0]->id)->get();
+                            $estoqueVazio[0]->delete();
+                            $request->session()->forget('cart');
+                        }
+                    } else {
+                        $request->session()->flash('erro', "O produto {$produto->nome} está com uma quantidade em estoque menor do que informado, fazendo a compra não ser finalizada. Por favor ajuste a quantidade. Quantidade restante: {$produto->getEstoques[0]->quantidade}.");
+                        return redirect()->route('listarCarrinho');
+                    }
+                    
                 } else {
                     $request->session()->flash('erro', "O produto informado (id {$item['id']}) está incorreto, verifique novamente e/ou contate o administrador!");
                     return redirect()->route('listarCarrinho');

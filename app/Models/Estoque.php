@@ -14,6 +14,6 @@ class Estoque extends Model
     protected $fillable= ['produto', 'quantidade', 'precoCompra', 'lote', 'validade'];
 
     public function produto(){
-        return $this->hasOne(Estoque::class, 'produto', 'id');
+        return $this->hasOne(Produto::class, 'id', 'produto');
      }
 }

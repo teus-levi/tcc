@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Hash;
 
 class EditarController extends Controller
 {
@@ -308,20 +309,17 @@ class EditarController extends Controller
         if(Auth::check()){
             //validando informações
             //dd($request->all());
-            if (!Auth::attempt($request->only('password'))){
-                $request->session()->flash('erro', "A senha não condiz com a senha atual.");
-                return redirect('/senha');
-            } elseif($request->senhaNova == $request->confirmarSenha) {
+            if($request->password == $request->confirmarSenha) {
                 //update no banco
                 $id = Auth::id();
-                $senha = Hash::make($request->senhaNova);
+                $senha = Hash::make($request->password);
                 User::where('id', $id)->update([
                     'password' => $senha
                 ]);
                 $request->session()->flash('mensagem', "Senha editada com sucesso!");
                 return redirect('/senha');
             }else {
-                $request->session()->flash('erro', "A confirmação da senha não condiz com a nova senha.");
+                $request->session()->flash('erro', "As senhas estão diferentes, informe novamente.");
                 return redirect('/senha');
             }
             

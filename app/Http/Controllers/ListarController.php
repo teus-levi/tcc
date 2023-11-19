@@ -14,6 +14,11 @@ use Illuminate\Support\Facades\DB;
 
 class ListarController extends Controller
 {
+    /*
+    public function __construct(){
+        $this->middleware('auth');
+    }*/
+    
     public function list_prod(){
         if(Auth::check()){
             //Se tem ou não o estoque do produto
@@ -41,12 +46,11 @@ class ListarController extends Controller
                             ->leftJoin('estoques', 'produtos.id', '=', 'estoques.produto')
                             ->join('categorias', 'categorias.id', '=', 'produtos.categoria')
                             ->join('marcas', 'marcas.id', '=', 'produtos.marca')
-                            ->whereNull('estoques.deleted_at')
                             ->whereNull('produtos.deleted_at')
                             ->select('produtos.*', DB::raw('SUM(estoques.quantidade) as quantidade'), 
                             'categorias.nome as n_categoria', 'marcas.nome as n_marca')
                             ->groupBy('produtos.id')
-                            ->orderBy('estoques.produto', 'asc')->paginate(10);
+                            ->orderBy('quantidade', 'asc')->paginate(10);
             //dd($produtos);
 
             return view('listar.produtos', compact('produtos'));
@@ -115,14 +119,105 @@ class ListarController extends Controller
     }
 
     public function list_pedidos(){
-        return view('listar.pedidos');
+        $periodo = 9999;
+        $ordenacao = 1;
+        $filtros = ['periodo' => $periodo, 'ordenacao' => $ordenacao];
+        $cliente = Cliente::where('usuario', '=', Auth::id())->get();
+        if(!isset($cliente)){
+            return redirect()->route('login');
+        }
+        $pedidos = DB::table('vendas')
+                        ->join('itens_vendas', 'vendas.id', '=', 'itens_vendas.venda')
+                        ->whereNull('vendas.deleted_at')
+                        ->whereNull('itens_vendas.deleted_at')
+                        ->where('vendas.cliente', '=', $cliente[0]->id)
+                        ->select('vendas.*')
+                        ->groupBy('vendas.id')
+                        ->orderBy('vendas.id', 'desc')
+                        ->paginate(5);
+                        
+        $itensPedidos = DB::table('vendas')
+                        ->join('itens_vendas', 'vendas.id', '=', 'itens_vendas.venda')
+                        ->join('produtos', 'produtos.id', '=', 'itens_vendas.produto')
+                        ->whereNull('vendas.deleted_at')
+                        ->whereNull('itens_vendas.deleted_at')
+                        ->where('vendas.cliente', '=', $cliente[0]->id)
+                        ->select('itens_vendas.*', 'produtos.id', 'produtos.nome')
+                        ->orderBy('itens_vendas.venda')
+                        ->get();
+        return view('listar.pedidos', compact('pedidos', 'itensPedidos', 'filtros'));
     }
 
     public function list_pagamento(Request $request){
-        $itens = $request->all();
+        $itens = $request->except('_token');
         $request->session()->put('compra', $itens);
         
         return view('listar.formaPagamento');
+    }
+
+    public function list_filt_pedidos(Request $request){
+        $periodo = $request->periodo;
+        $ordenacao = $request->ordenacao;
+        $filtros = $request->except('_token');
+        $filtro = "desc";
+        $id = Auth::id();
+
+        if($ordenacao == 2){
+            $filtro = "asc";
+        }
+        
+        if($periodo == 9999){
+            $pedidos = DB::table('vendas')
+                        ->join('itens_vendas', 'vendas.id', '=', 'itens_vendas.venda')
+                        ->whereNull('vendas.deleted_at')
+                        ->whereNull('itens_vendas.deleted_at')
+                        ->where('vendas.cliente', '=', $id)
+                        ->select('vendas.*')
+                        ->groupBy('vendas.id')
+                        ->orderBy('vendas.id', $filtro)
+                        ->paginate(5);
+                        
+            $itensPedidos = DB::table('vendas')
+                            ->join('itens_vendas', 'vendas.id', '=', 'itens_vendas.venda')
+                            ->join('produtos', 'produtos.id', '=', 'itens_vendas.produto')
+                            ->whereNull('vendas.deleted_at')
+                            ->whereNull('itens_vendas.deleted_at')
+                            ->where('vendas.cliente', '=', $id)
+                            ->select('itens_vendas.*', 'produtos.id', 'produtos.nome')
+                            ->orderBy('itens_vendas.venda')
+                            ->get();
+
+        return view('listar.pedidos', compact('pedidos', 'itensPedidos', 'filtros'));
+        
+        } else {
+            date_default_timezone_set('America/Sao_Paulo');
+            $dataAtual = date('Y-m-d H:i:s');
+            $segundosAtual = strtotime($dataAtual);
+            $dataLimite = date("Y-m-d H:i:s", ($segundosAtual - ($periodo * 86400)));
+
+            $pedidos = DB::table('vendas')
+                            ->join('itens_vendas', 'vendas.id', '=', 'itens_vendas.venda')
+                            ->whereNull('vendas.deleted_at')
+                            ->whereNull('itens_vendas.deleted_at')
+                            ->where('vendas.cliente', '=', $id)
+                            ->where('vendas.created_at', '>=', $dataLimite)
+                            ->select('vendas.*')
+                            ->groupBy('vendas.id')
+                            ->orderBy('vendas.id', $filtro)
+                            ->paginate(5);
+                            
+            $itensPedidos = DB::table('vendas')
+                            ->join('itens_vendas', 'vendas.id', '=', 'itens_vendas.venda')
+                            ->join('produtos', 'produtos.id', '=', 'itens_vendas.produto')
+                            ->where('vendas.cliente', '=', $id)
+                            ->whereNull('vendas.deleted_at')
+                            ->whereNull('itens_vendas.deleted_at')
+                            ->select('itens_vendas.*', 'produtos.id', 'produtos.nome')
+                            ->orderBy('itens_vendas.venda')
+                            ->get();
+            
+            return view('listar.pedidos', compact('pedidos', 'itensPedidos', 'filtros'));
+        }
     }
 
     

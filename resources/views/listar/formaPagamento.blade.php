@@ -17,19 +17,19 @@
                     <form method="post" action="/registrarCompra">
                         @csrf
                         <div class="form-check mb-2">
-                            <input class="form-check-input" type="radio" name="flexRadioDefault" value="cartao" id="flexRadioDefault1" checked>
+                            <input class="form-check-input" type="radio" name="flexRadioDefault" value="Cartão" id="flexRadioDefault1" checked>
                             <label class="form-check-label" for="flexRadioDefault1">
                               Cartão de débito/crédito (bandeiras mastercard, visa, etc..).
                             </label>
                           </div>
                           <div class="form-check mb-2">
-                            <input class="form-check-input" type="radio" name="flexRadioDefault" value="pix" id="flexRadioDefault2" >
+                            <input class="form-check-input" type="radio" name="flexRadioDefault" value="Pix" id="flexRadioDefault2" >
                             <label class="form-check-label" for="flexRadioDefault2">
                               Pagamento no pix.
                             </label>
                           </div>
                           <div class="form-check">
-                            <input class="form-check-input" type="radio" name="flexRadioDefault" value="dinheiro" id="flexRadioDefault3">
+                            <input class="form-check-input" type="radio" name="flexRadioDefault" value="Dinheiro" id="flexRadioDefault3">
                             <label class="form-check-label" for="flexRadioDefault3">
                               Pagamento em dinheiro.
                             </label>

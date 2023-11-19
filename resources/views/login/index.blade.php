@@ -23,14 +23,19 @@
                         <h1>LOGIN</h1>
                         <div class="textfield">
                             <label for="email">Email</label>
-                            <input type="email" name="email" id="email" placeholder="Email">
+                            <input type="email" required name="email" id="email" placeholder="Email">
                         </div>
                         <div class="textfield">
-                            <label for="password">password</label>
-                            <input type="password" name="password"  id="password" placeholder="password">
+                            <label for="password">Senha</label>
+                            <input type="password" required name="password"  id="password" placeholder="Senha">
                         </div>
                         <button type="submit" name="botao-login" class="btn-login" >Login</button>
-                    Não tem uma conta? <a href="/cadastrar"> <strong>cadastre-se</strong></a>
+                    <div style="margin-bottom: 7px">
+                        <span style="color:white;">Não tem uma conta?</span> <a style=" text-decoration: underline whitesmoke" href="/cadastrar"> <strong>Cadastrar</strong></a>
+                    </div>
+                    <div>
+                        <span style="color:white;">Esqueceu a senha?</span> <a style=" text-decoration: underline whitesmoke" href="/recuperarSenha"> <strong>Recuperar</strong></a>
+                    </div>
                 </div>
             </div>
         </form>

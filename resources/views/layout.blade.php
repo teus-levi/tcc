@@ -31,26 +31,38 @@
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
               <li class="nav-item">
-                <a class="nav-link" aria-current="page" href="{{ route('login')}}">Home</a>
+                <a class="nav-link" aria-current="page" href="{{ route('home')}}">Home</a>
               </li>
+              @auth
               <li class="nav-item">
                 <a class="nav-link" href="{{route('editarPerfil')}}">Perfil</a>
               </li>
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Cadastrar
-                </a>
-                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                  <li><a class="dropdown-item" href="{{ route('listarProdutos')}}">Produtos</a></li>
-                  <li><a class="dropdown-item" href="{{ route('listarMarcas')}}">Marcas</a></li>
-                  <li><a class="dropdown-item" href="{{ route('listarCategorias')}}">Categorias</a></li>
-                  <li><hr class="dropdown-divider"></li>
-                  <li><a class="dropdown-item" href="{{ route('registrarAdministradores')}}">Administradores</a></li>
-                </ul>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/sair">Sair</a>
-              </li>
+              @endauth
+              @can('administrador')
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Cadastrar
+                  </a>
+                  <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <li><a class="dropdown-item" href="{{ route('listarProdutos')}}">Produtos</a></li>
+                    <li><a class="dropdown-item" href="{{ route('listarMarcas')}}">Marcas</a></li>
+                    <li><a class="dropdown-item" href="{{ route('listarCategorias')}}">Categorias</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{{ route('registrarAdministradores')}}">Administradores</a></li>
+                  </ul>
+                </li>
+              @endcan
+              @auth
+                <li class="nav-item">
+                  <a class="nav-link" href="/sair">Sair</a>
+                </li>
+              @endauth
+              <!-- Visitante  = guest -->
+              @guest
+                <li class="nav-item">
+                  <a class="nav-link" href="/">Entrar</a>
+                </li>
+              @endguest
             </ul>
             <!-- carrinho-->
             @livewire('carrinho')

@@ -27,324 +27,121 @@
                     </a>
                 </div>
             </div>
+            <!---->
+            
             <div class="col-8">
-                <form class="row mb-3">
+                <form method="POST" class="row mb-3" action="/filtrarPedidos">
+                    @csrf
                     <div class="col-12 col-md-6 mb-3">
                         <div class="form-floating">
-                            <select class="form-select">
-                                <option value="30">Últimos 30 dias</option>
-                                <option value="60">Últimos 60 dias</option>
-                                <option value="90">Últimos 90 dias</option>
-                                <option value="180">Últimos 180 dias</option>
-                                <option value="360" selected>Últimos 360 dias</option>
-                                <option value="9999">Todo o período</option>
+                            
+                            <select class="form-select" name="periodo">
+                                <option value="30" {{$filtros['periodo'] == 30 ? 'selected' : ''}}>Últimos 30 dias</option>
+                                <option value="60" {{$filtros['periodo']  == 60 ? 'selected' : ''}}>Últimos 60 dias</option>
+                                <option value="90" {{$filtros['periodo']  == 90 ? 'selected' : ''}}>Últimos 90 dias</option>
+                                <option value="180" {{$filtros['periodo']  == 180 ? 'selected' : ''}}>Últimos 180 dias</option>
+                                <option value="360" {{$filtros['periodo']  == 360 ? 'selected' : ''}}>Últimos 360 dias</option>
+                                <option value="9999" {{$filtros['periodo']  == 9999 ? 'selected' : ''}}>Todo o período</option>
                             </select>
                             <label>Período</label>
                         </div>
                     </div>
                     <div class="col-12 col-md-6">
                         <div class="form-floating">
-                            <select class="form-select">
-                                <option value="1" selected>Mais novos primeiro</option>
-                                <option value="2">Mais antigos primeiro</option>
+                            <select class="form-select" name="ordenacao">
+                                <option value="1" {{$filtros['ordenacao']  == 1 ? 'selected' : ''}}>Mais novos primeiro</option>
+                                <option value="2" {{$filtros['ordenacao'] == 2 ? 'selected' : ''}}>Mais antigos primeiro</option>
                             </select>
                             <label>Ordenação</label>
                         </div>
                     </div>
+                    <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary w-25 ">Filtrar</button>
+                    </div>
                 </form>
-                <div class="accordion">
-                    <div class="accordion-item">
-                        <div class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#pedido000010">
-                                <b>Pedido 000010</b>
-                                <span class="mx-1">(realizado em 07/11/2023)</span>
-                            </button>
-                        </div>
-                        <div id="pedido000010" class="accordion-collapse collapse" data-bs-parent="#divPedidos">
-                            <div class="accordion-body">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Produto</th>
-                                            <th class="text-end">R$ Unit.</th>
-                                            <th class="text-center">Qtde.</th>
-                                            <th class="text-end">Subtotal</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Produto 1</td>
-                                            <td class="text-end">2,99</td>
-                                            <td class="text-center">3</td>
-                                            <td class="text-end">8,97</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Produto 2</td>
-                                            <td class="text-end">2,99</td>
-                                            <td class="text-center">3</td>
-                                            <td class="text-end">8,97</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Produto 3</td>
-                                            <td class="text-end">2,99</td>
-                                            <td class="text-center">3</td>
-                                            <td class="text-end">8,97</td>
-                                        </tr>
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <th class="text-end" colspan="3">Valor Total:</th>
-                                            <td class="text-end">26,91</td>
-                                        </tr>
-                                        <tr>
-                                            <th class="text-end" colspan="3">Forma de Pagamento:</th>
-                                            <td class="text-end">Crédito VISA 1x</td>
-                                        </tr>
-                                        <tr>
-                                            <th class="text-end" colspan="5">
-                                            <button class="btn btn-outline-warning ">Ver detalhes</button>
-                                            </th>
-                                        </tr>
-                                    </tfoot>
-                                </table>
+                @if (isset($pedidos))
+                    <?php $control = 0; ?>
+                    @foreach ($pedidos as $item)
+                        @if ($control != $item->id)
+                        
+                    
+                            <div class="accordion">
+                                <div class="accordion-item">
+                                    <div class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#{{$item->id}}">
+                                            <b>Pedido código #{{$item->id}}</b>
+                                            <span class="mx-1">(realizado em {{$item->created_at}})</span>
+                                        </button>
+                                    </div>
+                                    <div id="{{$item->id}}" class="accordion-collapse collapse" data-bs-parent="#divPedidos">
+                                        <div class="accordion-body">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Produto</th>
+                                                        <th class="text-end">Unit.</th>
+                                                        <th class="text-center">Qtde.</th>
+                                                        <th class="text-end">Subtotal</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php $total = 0; ?>
+                                                    @foreach ($itensPedidos as $produto)
+        
+                                                        @if ($produto->venda == $item->id)
+                                                            <tr>
+                                                                <td>{{$produto->nome}}</td>
+                                                                <td class="text-end">R${{number_format(($produto->valorUnitario / 100), 2, ",", ".")}}</td>
+                                                                <td class="text-center">{{$produto->quantidade}}</td>
+                                                                <td class="text-end">R${{number_format(($produto->valorUnitario * $produto->quantidade) / 100, 2, ",", ".")}}</td>
+                                                            </tr>
+                                                            <?php $total += (($produto->valorUnitario * $produto->quantidade) / 100) ?>
+                                                        @endif
+                                                    
+                                                    @endforeach
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <th class="text-end" colspan="3">Valor Total:</th>
+                                                        <td class="text-end">R${{number_format($total, 2, ",", ".")}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="text-end" colspan="3">Forma de Pagamento:</th>
+                                                        <td class="text-end">{{$item->modoRecebimento}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="text-end" colspan="5">
+                                                        <button class="btn btn-outline-warning ">Ver detalhes</button>
+                                                        </th>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                        <?php $control = $item->id ?>
+                        @endif
+                    @endforeach
+                    
+                @else
+                    <div>
+                        Nenhum pedido para listar.
                     </div>
-                    <div class="accordion-item">
-                        <div class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#pedido000009">
-                                <b>Pedido 000009</b>
-                                <span class="mx-1">(realizado em 07/11/2023)</span>
-                            </button>
-                        </div>
-                        <div id="pedido000009" class="accordion-collapse collapse" data-bs-parent="#divPedidos">
-                            <div class="accordion-body">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Produto</th>
-                                            <th class="text-end">R$ Unit.</th>
-                                            <th class="text-center">Qtde.</th>
-                                            <th class="text-end">Subtotal</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Produto 1</td>
-                                            <td class="text-end">2,99</td>
-                                            <td class="text-center">3</td>
-                                            <td class="text-end">8,97</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Produto 2</td>
-                                            <td class="text-end">2,99</td>
-                                            <td class="text-center">3</td>
-                                            <td class="text-end">8,97</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Produto 3</td>
-                                            <td class="text-end">2,99</td>
-                                            <td class="text-center">3</td>
-                                            <td class="text-end">8,97</td>
-                                        </tr>
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <th class="text-end" colspan="3">Valor Total:</th>
-                                            <td class="text-end">26,91</td>
-                                        </tr>
-                                        <tr>
-                                            <th class="text-end" colspan="3">Forma de Pagamento:</th>
-                                            <td class="text-end">Crédito VISA 1x</td>
-                                        </tr>
-                                        <tr>
-                                            <th class="text-end" colspan="5">
-                                            <button class="btn btn-outline-warning ">Ver detalhes</button>
-                                            </th>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
-                        </div>
+                @endif
+                @if (isset($filtros))
+                    <div class="row pt-5">
+                        {{$pedidos->appends($filtros)->links()}}
                     </div>
-                    <div class="accordion-item">
-                        <div class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#pedido000008">
-                                <b>Pedido 000008</b>
-                                <span class="mx-1">(realizado em 07/11/2023)</span>
-                            </button>
-                        </div>
-                        <div id="pedido000008" class="accordion-collapse collapse" data-bs-parent="#divPedidos">
-                            <div class="accordion-body">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Produto</th>
-                                            <th class="text-end">R$ Unit.</th>
-                                            <th class="text-center">Qtde.</th>
-                                            <th class="text-end">Subtotal</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Produto 1</td>
-                                            <td class="text-end">2,99</td>
-                                            <td class="text-center">3</td>
-                                            <td class="text-end">8,97</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Produto 2</td>
-                                            <td class="text-end">2,99</td>
-                                            <td class="text-center">3</td>
-                                            <td class="text-end">8,97</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Produto 3</td>
-                                            <td class="text-end">2,99</td>
-                                            <td class="text-center">3</td>
-                                            <td class="text-end">8,97</td>
-                                        </tr>
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <th class="text-end" colspan="3">Valor Total:</th>
-                                            <td class="text-end">26,91</td>
-                                        </tr>
-                                        <tr>
-                                            <th class="text-end" colspan="3">Forma de Pagamento:</th>
-                                            <td class="text-end">Crédito VISA 1x</td>
-                                        </tr>
-                                        <tr>
-                                            <th class="text-end" colspan="5">
-                                            <button class="btn btn-outline-warning ">Ver detalhes</button>
-                                            </th>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
-                        </div>
+                @else
+                    <div class="row pt-5">
+                        {{$pedidos->links()}}
                     </div>
-                    <div class="accordion-item">
-                        <div class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#pedido000007">
-                                <b>Pedido 000007</b>
-                                <span class="mx-1">(realizado em 07/11/2023)</span>
-                            </button>
-                        </div>
-                        <div id="pedido000007" class="accordion-collapse collapse" data-bs-parent="#divPedidos">
-                            <div class="accordion-body">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Produto</th>
-                                            <th class="text-end">R$ Unit.</th>
-                                            <th class="text-center">Qtde.</th>
-                                            <th class="text-end">Subtotal</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Produto 1</td>
-                                            <td class="text-end">2,99</td>
-                                            <td class="text-center">3</td>
-                                            <td class="text-end">8,97</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Produto 2</td>
-                                            <td class="text-end">2,99</td>
-                                            <td class="text-center">3</td>
-                                            <td class="text-end">8,97</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Produto 3</td>
-                                            <td class="text-end">2,99</td>
-                                            <td class="text-center">3</td>
-                                            <td class="text-end">8,97</td>
-                                        </tr>
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <th class="text-end" colspan="3">Valor Total:</th>
-                                            <td class="text-end">26,91</td>
-                                        </tr>
-                                        <tr>
-                                            <th class="text-end" colspan="3">Forma de Pagamento:</th>
-                                            <td class="text-end">Crédito VISA 1x</td>
-                                        </tr>
-                                        <tr>
-                                            <th class="text-end" colspan="5">
-                                            <button class="btn btn-outline-warning ">Ver detalhes</button>
-                                            </th>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="accordion-item">
-                        <div class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#pedido000006">
-                                <b>Pedido 000006</b>
-                                <span class="mx-1">(realizado em 07/11/2023)</span>
-                            </button>
-                        </div>
-                        <div id="pedido000006" class="accordion-collapse collapse" data-bs-parent="#divPedidos">
-                            <div class="accordion-body">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Produto</th>
-                                            <th class="text-end">R$ Unit.</th>
-                                            <th class="text-center">Qtde.</th>
-                                            <th class="text-end">Subtotal</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Produto 1</td>
-                                            <td class="text-end">2,99</td>
-                                            <td class="text-center">3</td>
-                                            <td class="text-end">8,97</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Produto 2</td>
-                                            <td class="text-end">2,99</td>
-                                            <td class="text-center">3</td>
-                                            <td class="text-end">8,97</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Produto 3</td>
-                                            <td class="text-end">2,99</td>
-                                            <td class="text-center">3</td>
-                                            <td class="text-end">8,97</td>
-                                        </tr>
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <th class="text-end" colspan="3">Valor Total:</th>
-                                            <td class="text-end">26,91</td>
-                                        </tr>
-                                        <tr>
-                                            <th class="text-end" colspan="3">Forma de Pagamento:</th>
-                                            <td class="text-end">Crédito VISA 1x</td>
-                                        </tr>
-                                        <tr>
-                                            <th class="text-end" colspan="5">
-                                            <button class="btn btn-outline-warning ">Ver detalhes</button>
-                                            </th>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                @endif
+                
             </div>
+            <!---->
         </div>
     </div>
 </main>

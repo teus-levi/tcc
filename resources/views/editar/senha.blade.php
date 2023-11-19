@@ -6,7 +6,7 @@
 @section('conteudo')
 <main class="flex-fill">
     <div class="container">
-        <h1 class="mt-4">Minha conta</h1>
+        <h1 class="mt-4">Alterar senha</h1>
         <div class="row gx-3">
             <div class="col-4">
                 <div class="list-group">
@@ -30,18 +30,14 @@
             <div class="col-8">
                 <form class="col-sm-12 col-md-8 col-lg-6" action="/storeSenha" method="POST">
                     @csrf
-                    <div class="form-floating mb-3">
-                        <input type="password" id="txtSenhaAtual" class="form-control" placeholder=" " autofocus>
-                        <label for="txtSenhaAtual">Digite aqui sua senha atual</label>
-                    </div>
 
                     <div class="form-floating mb-3">
-                        <input type="password" id="txtSenha" class="form-control" placeholder=" ">
+                        <input type="password" id="txtSenha" name="password" class="form-control" placeholder=" ">
                         <label for="txtSenha">Digite aqui sua nova senha</label>
                     </div>
 
                     <div class="form-floating mb-3">
-                        <input type="password" id="txtConfSenha" class="form-control" placeholder=" ">
+                        <input type="password" name="confirmarSenha" id="txtConfSenha" class="form-control" placeholder=" ">
                         <label for="txtConfSenha">Redigite aqui a nova senha</label>
                     </div>
 

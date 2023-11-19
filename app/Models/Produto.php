@@ -15,6 +15,10 @@ class Produto extends Model
         'nome', 'imagem', 'marca', 'categoria', 'administrador', 'descricao', 'precoVendaAtual'
     ];
 
+    public function getEstoques(){
+        return $this->hasMany(Estoque::class, 'produto');
+    }
+
     /**
      * 
      * $table->id();

@@ -59,8 +59,12 @@ class LoginController extends Controller
                 */
                 $produtos = DB::table('produtos')
                 ->join('estoques', 'produtos.id', '=', 'estoques.produto')
-                ->whereNull('estoques.deleted_at')
+                ->join('marcas', 'produtos.marca', '=', 'marcas.id')
+                ->join('categorias', 'produtos.categoria', '=', 'categorias.id')
                 ->whereNull('produtos.deleted_at')
+                ->whereNull('estoques.deleted_at')
+                ->whereNull('categorias.deleted_at')
+                ->whereNull('marcas.deleted_at')
                 ->select('produtos.*', DB::raw('SUM(estoques.quantidade) as quantidade'))
                 ->groupBy('produtos.id')
                 ->orderBy('estoques.produto', 'asc')->paginate(6);
@@ -70,7 +74,6 @@ class LoginController extends Controller
     }
 
     public function pos_cad(){
-        if(Auth::check()){
             //$produtos = Produto::paginate(6);
             /*
             $produtos = DB::table('produtos')
@@ -90,10 +93,7 @@ class LoginController extends Controller
                         ->groupBy('produtos.id')
                         ->orderBy('estoques.produto', 'asc')->paginate(6);
             $carrinho = true;
-            return view('principal.index', compact('produtos', 'carrinho'));;
-        } else{
-            return redirect('/');
-        }
+            return view('principal.index', compact('produtos', 'carrinho'));
         
     }
 
