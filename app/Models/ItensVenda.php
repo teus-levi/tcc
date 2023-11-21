@@ -15,6 +15,10 @@ class ItensVenda extends Model
         'produto', 'quantidade', 'valorUnitario', 'venda'
     ];
 
+    public function getProduto(){
+        return $this->belongsTo(Produto::class, 'produto', 'id');
+    }
+
     /**
      * $table->int('quantidade');
      *       $table->double('valorUnitario');

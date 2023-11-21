@@ -71,7 +71,7 @@
                                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                                             data-bs-target="#{{$item->id}}">
                                             <b>Pedido código #{{$item->id}}</b>
-                                            <span class="mx-1">(realizado em {{$item->created_at->format('d/m/Y') }})</span>
+                                            <span class="mx-1">realizado em {{date('d/m/Y', strtotime($item->created_at)) }}</span>
                                         </button>
                                     </div>
                                     <div id="{{$item->id}}" class="accordion-collapse collapse" data-bs-parent="#divPedidos">

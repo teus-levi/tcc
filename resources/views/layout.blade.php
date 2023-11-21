@@ -41,12 +41,13 @@
               @can('administrador')
                 <li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Cadastrar
+                    Gerenciar
                   </a>
                   <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <li><a class="dropdown-item" href="{{ route('listarProdutos')}}">Produtos</a></li>
                     <li><a class="dropdown-item" href="{{ route('listarMarcas')}}">Marcas</a></li>
                     <li><a class="dropdown-item" href="{{ route('listarCategorias')}}">Categorias</a></li>
+                    <li><a class="dropdown-item" href="{{ route('listarVendas')}}">Vendas</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="{{ route('registrarAdministradores')}}">Administradores</a></li>
                   </ul>

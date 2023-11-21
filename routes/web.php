@@ -54,6 +54,7 @@ Route::middleware('auth')->group(function(){
     Route::get('/listarProdutos', [ListarController::class, 'list_prod'])->name('listarProdutos')->middleware('can:administrador');
     Route::get('/listarMarcas', [ListarController::class, 'list_marcas'])->name('listarMarcas')->middleware('can:administrador');
     Route::get('/listarCategorias', [ListarController::class, 'list_categorias'])->name('listarCategorias')->middleware('can:administrador');
+    Route::get('/listarVendas', [ListarController::class, 'list_vendas'])->name('listarVendas')->middleware('can:administrador');
     Route::get('/listarEstoque/{id}', [ListarController::class, 'list_estoque'])->name('listarEstoque')->middleware('can:administrador');
 
     Route::get('/pedidos', [ListarController::class, 'list_pedidos'])->name('listarPedidos');
@@ -64,10 +65,12 @@ Route::middleware('auth')->group(function(){
     Route::post('/editarMarca/{id}', [EditarController::class, 'edit_marca'])->name('editarMarca')->middleware('can:administrador');
     Route::post('/editarCategoria/{id}', [EditarController::class, 'edit_categoria'])->name('editarCategoria')->middleware('can:administrador');
     Route::get('/editarEstoque/{id}', [EditarController::class, 'edit_estoque'])->name('editarEstoque')->middleware('can:administrador');
+    Route::get('/editarVenda/{id}', [EditarController::class, 'edit_venda'])->name('editarVenda')->middleware('can:administrador');
     Route::post('/storeEditProduto/{id}', [EditarController::class, 'store_prod'])->name('salvarEditProduto')->middleware('can:administrador');
     Route::post('/storeEditMarca/{id}', [EditarController::class, 'store_marca'])->name('salvarEditMarca')->middleware('can:administrador');
     Route::post('/storeEditCategoria/{id}', [EditarController::class, 'store_categoria'])->name('salvarEditCategoria')->middleware('can:administrador');
     Route::post('/storeEditEstoque/{id}', [EditarController::class, 'store_estoque'])->name('salvarEditEstoque')->middleware('can:administrador');
+    Route::post('/storeEditVenda/{id}', [EditarController::class, 'store_venda'])->name('salvarEditVenda')->middleware('can:administrador');
     Route::POST('/storePerfil/{id}', [EditarController::class, 'store_perfil'])->name('salvarPerfil');
     Route::POST('/storeEndereco/{id}', [EditarController::class, 'store_endereco'])->name('salvarEndereco');
     Route::POST('/storeSenha', [EditarController::class, 'store_senha'])->name('salvarSenha');

@@ -10,6 +10,7 @@ use App\Models\Categoria;
 use App\Models\Produto;
 use App\Models\User;
 use App\Models\Estoque;
+use App\Models\Venda;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -365,6 +366,40 @@ class EditarController extends Controller
         } else {
             return redirect()->route('login');
         }
+    }
+
+    public function edit_venda(Request $request){
+        $venda = Venda::withTrashed()->find($request->id);
+        //dd($venda);
+        return view('editar.venda', compact('venda'));
+    }
+
+    public function store_venda(Request $request){
+
+            //formatando informações
+            date_default_timezone_set('America/Sao_Paulo');
+            $dataAtual = date('Y-m-d');
+            //dd($request->all());
+            $parcelas = $request->parcelas;
+            $saldo = $request->saldo;
+            $vencimento = $request->vencimento;
+            if($parcelas >= 1 && $saldo >= 0 && $vencimento >= $dataAtual){
+                //update no banco
+                Venda::where('id', $request->id)->update([
+                    'parcelas' => $request->parcelas,
+                    'saldoReceber' => $request->saldo,
+                    'vencimento' => $request->vencimento,
+                    'statusEntrega' => $request->status
+                ]);
+
+                $request->session()->flash('mensagem', "Informações atualizadas com sucesso!");
+                return redirect()->route('editarVenda', [$request->id]);
+            } else{
+                $request->session()->flash('erro', "Verifique novamente as informações!");
+                return redirect()->route('editarVenda', [$request->id]);
+            }
+            
+
     }
 
 }

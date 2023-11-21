@@ -9,6 +9,7 @@ use App\Models\Categoria;
 use App\Models\Produto;
 use App\Models\User;
 use App\Models\Estoque;
+use App\Models\Venda;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -133,7 +134,7 @@ class ListarController extends Controller
                         ->where('vendas.cliente', '=', $cliente[0]->id)
                         ->select('vendas.*')
                         ->groupBy('vendas.id')
-                        ->orderBy('vendas.id', 'desc')
+                        ->orderBy('vendas.created_at', 'desc')
                         ->paginate(5);
                         
         $itensPedidos = DB::table('vendas')
@@ -174,7 +175,7 @@ class ListarController extends Controller
                         ->where('vendas.cliente', '=', $id)
                         ->select('vendas.*')
                         ->groupBy('vendas.id')
-                        ->orderBy('vendas.id', $filtro)
+                        ->orderBy('vendas.created_at', $filtro)
                         ->paginate(5);
                         
             $itensPedidos = DB::table('vendas')
@@ -203,7 +204,7 @@ class ListarController extends Controller
                             ->where('vendas.created_at', '>=', $dataLimite)
                             ->select('vendas.*')
                             ->groupBy('vendas.id')
-                            ->orderBy('vendas.id', $filtro)
+                            ->orderBy('vendas.created_at', $filtro)
                             ->paginate(5);
                             
             $itensPedidos = DB::table('vendas')
@@ -220,6 +221,9 @@ class ListarController extends Controller
         }
     }
 
-    
+    public function list_vendas(){
+        $vendas = Venda::withTrashed()->orderBy('id', 'desc')->paginate(10);
+        return view('listar.vendas', compact('vendas'));
+    }
 
 }
