@@ -56,6 +56,7 @@ Route::middleware('auth')->group(function(){
     Route::get('/listarCategorias', [ListarController::class, 'list_categorias'])->name('listarCategorias')->middleware('can:administrador');
     Route::get('/listarVendas', [ListarController::class, 'list_vendas'])->name('listarVendas')->middleware('can:administrador');
     Route::get('/listarEstoque/{id}', [ListarController::class, 'list_estoque'])->name('listarEstoque')->middleware('can:administrador');
+    //Route::get('/fecharPedido/{id}', [ListarController::class, 'list_fechar_pedido'])->name('fecharPedido');
 
     Route::get('/pedidos', [ListarController::class, 'list_pedidos'])->name('listarPedidos');
     Route::get('/formaPagamento', [ListarController::class, 'list_pagamento'])->name('formaPagamento');

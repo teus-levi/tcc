@@ -9,6 +9,8 @@ use App\Models\User;
 use App\Models\Estoque;
 use App\Models\Venda;
 use App\Models\ItensVenda;
+use App\Models\Notificacao;
+use App\Http\Livewire\Notificacoes;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -227,6 +229,13 @@ class RegistrarController extends Controller
                         Estoque::where('id', $produto->getEstoques[0]->id)->update([
                             'quantidade' => $quantidade
                         ]);
+                        //Ajustando notificações
+                        /*
+                        $notif = new Notificacao;
+                        $notif->descricao = "Confira no código #{$venda->id}";
+                        $notif->venda = $venda->id;
+                        $notif->save();
+                        */
                         if($quantidade == 0){
                             //o get pode trazer mais de 1 objeto, o first traria valor único
                             //também poderia usar o delete na frente da collection

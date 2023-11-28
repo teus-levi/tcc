@@ -226,4 +226,9 @@ class ListarController extends Controller
         return view('listar.vendas', compact('vendas'));
     }
 
+    public function list_fechar_pedido(Request $request){
+        $venda = Venda::find($request->id);
+        return view('listar.fecharPedido', compact('venda'));
+    }
+
 }

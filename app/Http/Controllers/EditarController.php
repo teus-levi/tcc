@@ -381,13 +381,14 @@ class EditarController extends Controller
             $dataAtual = date('Y-m-d');
             //dd($request->all());
             $parcelas = $request->parcelas;
-            $saldo = $request->saldo;
             $vencimento = $request->vencimento;
+            $pontuacao = array(".", ",");
+            $saldo= str_replace($pontuacao, "", $request->saldo);
             if($parcelas >= 1 && $saldo >= 0 && $vencimento >= $dataAtual){
                 //update no banco
                 Venda::where('id', $request->id)->update([
                     'parcelas' => $request->parcelas,
-                    'saldoReceber' => $request->saldo,
+                    'saldoReceber' => $saldo,
                     'vencimento' => $request->vencimento,
                     'statusEntrega' => $request->status
                 ]);

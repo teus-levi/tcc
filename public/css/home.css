@@ -92,8 +92,26 @@ h2{
 cart-content{display:inline-block;vertical-align:middle}.dropdown-cart .cart-content h5{margin:0;font-weight:500;text-overflow:ellipsis;overflow:hidden;white-space:nowrap}
 /*ícones do formulário*/
 .input-group-addon{border-radius:2px;border:1px solid rgba(120,130,140,.13);width: 2.5em;}
-/*Formulário do perfil*/
-
+/*Notificações*/
+.message-center a{border-bottom:1px solid rgba(120,130,140,.13);display:block;padding:9px 15px; text-decoration: none}
+.message-center a:hover{background:#f7fafc}
+.message-center .user-img{width:50px;float:left;position:relative;margin:0 10px 15px 0}
+.message-center .user-img img{width:100%}
+.message-center .user-img .profile-status{border:2px solid #fff;border-radius:50%;display:inline-block;height:10px;left:40px;position:absolute;top:1px;width:10px}
+.message-center .user-img .online{background:#00c292}
+.message-center .user-img .busy{background:#fb9678}
+.message-center .user-img .away,.message-center .user-img .offline{background:#fec107}
+.mail-contnet h5{margin:0;font-weight:400;text-overflow:ellipsis;overflow:hidden;white-space:nowrap}
+.message-center .mail-contnet .mail-desc{font-size:12px;display:block;margin:5px 0;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;color:#2b2b2b}
+.message-center .mail-contnet .time{display:block;font-size:10px;color:#2b2b2b}
+.mail-contnet a.action{margin-left:10px;font-size:12px;visibility:hidden}
+.mail-contnet:hover {visibility:visible}
+.comment-center .mail-contnet .mail-desc{font-size:14px;display:block;margin:8px 0;line-height:25px;color:#848a96;height:50px;overflow:hidden}
+.comment-center .mail-contnet .time{display:block;font-size:10px;color:#2b2b2b}
+.noti{color:#2b2b2b;font-family:Poppins,sans-serif;margin:10px 0;font-weight:300}.noti{font-size:16px;font-size:14px}
+.noti{margin:0;;font-weight:400;text-overflow:ellipsis;overflow:hidden;white-space:nowrap}
+.noti a{color:#686868;line-height:20px;font-weight:500; text-decoration: none}
+.drop-title{border-bottom:1px solid rgba(0,0,0,.1);color:#2b2b2b;font-size:15px;font-weight:600;padding:11px 20px 15px}
   @media (min-width: 923px) {
     .carousel{
         padding: 5px;
