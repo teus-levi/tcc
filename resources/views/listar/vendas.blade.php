@@ -9,8 +9,50 @@
 
 
     <h2 style="margin-left: 0%;" class="text-center">Vendas</h2>
-    
+<div class="flex-fill">    
 <div class="container">
+    <div class="row gx-3">
+    <div class="col-12">
+        <form method="POST" class="row mb-3" action="/filtrarVendas">
+            @csrf
+            <div class="col-12 col-md-6 mb-3">
+                <div class="form-floating">
+                    
+                    <select class="form-select" name="periodo">
+                        <option value="30" {{$filtros['periodo'] == 30 ? 'selected' : ''}}>Últimos 30 dias</option>
+                        <option value="60" {{$filtros['periodo']  == 60 ? 'selected' : ''}}>Últimos 60 dias</option>
+                        <option value="90" {{$filtros['periodo']  == 90 ? 'selected' : ''}}>Últimos 90 dias</option>
+                        <option value="180" {{$filtros['periodo']  == 180 ? 'selected' : ''}}>Últimos 180 dias</option>
+                        <option value="360" {{$filtros['periodo']  == 360 ? 'selected' : ''}}>Últimos 360 dias</option>
+                        <option value="9999" {{$filtros['periodo']  == 9999 ? 'selected' : ''}}>Todo o período</option>
+                    </select>
+                    <label>Período</label>
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="form-floating">
+                    <select class="form-select" name="ordenacao">
+                        <option value="1" {{$filtros['ordenacao']  == 1 ? 'selected' : ''}}>Mais novos primeiro</option>
+                        <option value="2" {{$filtros['ordenacao'] == 2 ? 'selected' : ''}}>Mais antigos primeiro</option>
+                    </select>
+                    <label>Ordenação</label>
+                </div>
+            </div>
+            @if(isset($pesquisa))
+                <div class="input-group input-group-sm">
+                    <input type="text" value="{{$pesquisa}}" name="pesquisa" class="form-control" placeholder="Digite aqui o nome do recebedor">
+                </div>
+            @else
+                <div class="input-group input-group-sm">
+                    <input type="text" name="pesquisa" class="form-control" placeholder="Digite aqui o nome do recebedor">
+                </div>
+            @endif
+            <div class="d-flex justify-content-end mt-2">
+            <button type="submit" class="btn btn-primary w-25 ">Filtrar</button>
+            </div>
+        </form>
+    </div>
+    </div>
     <hr>
     <table class="table table-hover">
         <thead class="thead-light">
@@ -71,12 +113,21 @@
             </tbody>
         </thead>
     </table>
-    <div class="d-flex justify-content-center mb-5">
-        <div class="row pt-5">
-            {{$vendas->links()}}
+    @if (isset($filtros))
+        <div class="d-flex justify-content-center mb-5">
+            <div class="row pt-5">
+                {{$vendas->appends($filtros)->links()}}
+            </div>
         </div>
-    </div>
+    @else
+        <div class="d-flex justify-content-center mb-5">
+            <div class="row pt-5">
+                {{$vendas->links()}}
+            </div>
+        </div>
+    @endif
     
+</div>
 </div>
 @endsection
 @push('scripts')

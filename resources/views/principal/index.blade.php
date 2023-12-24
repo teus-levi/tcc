@@ -127,25 +127,32 @@
 <main class="flex-fill">
     <div class="container">
         <div class="row">
-            <div class="col-12 col-md-5">
-                <form class="justify-content-center justify-content-md-start mb-3 mb-md-0">
-                    <div class="input-group input-group-sm">
-                        <input type="text" class="form-control" placeholder="Digite aqui o que procura">
-                        <button class="btn btn-danger">Buscar</button>
+            @csrf
+            <form class="d-flex " action="/filtrarHome" method="GET">
+                <div class="col-12 col-md-5">
+                    <div class="justify-content-center justify-content-md-start mb-3 mb-md-0">
+                        <div class="input-group input-group-sm">
+                            @if(isset($procura))
+                                <input type="text" name="pesquisa" class="form-control" value="{{$procura}}" placeholder="Digite aqui o que procura">
+                            @else
+                                <input type="text" name="pesquisa" class="form-control" placeholder="Digite aqui o que procura">
+                            @endif
+                            <button type="submit" class="btn btn-danger">Buscar</button>
+                        </div>
                     </div>
-                </form>
-            </div>
-            <div class="col-12 col-md-7">
-                <div class="d-flex flex-row-reverse justify-content-center justify-content-md-start">
-                    <form class="d-inline-block">
-                        <select class="form-select form-select-sm">
-                            <option>Ordenar pelo nome</option>
-                            <option>Ordenar pelo menor preço</option>
-                            <option>Ordenar pelo maior preço</option>
-                        </select>
-                    </form>
                 </div>
-            </div>
+                <div class="col-12 col-md-7">
+                    <div class="d-flex flex-row-reverse justify-content-center justify-content-md-start">
+                        <div class="d-inline-block">
+                            <select name="ordenacao" class="form-select form-select-sm">
+                                <option value="1" {{$filtros['ordenacao'] == 1 ? 'selected' : ''}}>Ordenar pelo nome</option>
+                                <option value="2" {{$filtros['ordenacao'] == 2 ? 'selected' : ''}}>Ordenar pelo menor preço</option>
+                                <option value="3" {{$filtros['ordenacao'] == 3 ? 'selected' : ''}}>Ordenar pelo maior preço</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </form>
                     <!--
                     <nav class="d-inline-block me-3">
                         <ul class="pagination pagination-sm my-0">
@@ -237,7 +244,7 @@
 
     </div>
 -->
-                </div>
+    </div>
     <section class="py-5">
         <div class="container px-4 px-lg-5 mt-5">
             <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
@@ -275,11 +282,19 @@
             </div>
         </div>
     </section>
-    <div class="d-flex justify-content-center mb-5">
-        <div class="row pt-5">
-            {{$produtos->links()}}
+    @if(!isset($filtros))
+        <div class="d-flex justify-content-center mb-5">
+            <div class="row pt-5">
+                {{$produtos->links()}}
+            </div>
         </div>
-    </div>
+    @else
+        <div class="d-flex justify-content-center mb-5">
+            <div class="row pt-5">
+                {{$produtos->appends($filtros)->links()}}
+            </div>
+        </div>
+    @endif
 
             </div>
 </main>

@@ -61,6 +61,8 @@ Route::middleware('auth')->group(function(){
     Route::get('/pedidos', [ListarController::class, 'list_pedidos'])->name('listarPedidos');
     Route::get('/formaPagamento', [ListarController::class, 'list_pagamento'])->name('formaPagamento');
     Route::any('/filtrarPedidos', [ListarController::class, 'list_filt_pedidos'])->name('filtrarPedidos');
+    Route::any('/filtrarHome', [ListarController::class, 'list_filt_home'])->name('filtrarHome');
+    Route::any('/filtrarVendas', [ListarController::class, 'list_filt_vendas'])->name('filtrarVendas');
 
     Route::post('/editarProduto/{id}', [EditarController::class, 'edit_prod'])->name('editarProduto')->middleware('can:administrador');
     Route::post('/editarMarca/{id}', [EditarController::class, 'edit_marca'])->name('editarMarca')->middleware('can:administrador');

@@ -221,9 +221,104 @@ class ListarController extends Controller
         }
     }
 
+    public function list_filt_home(Request $request) {
+        $ordenacao = $request->ordenacao;
+        $ordenacao2 = '';
+        $filtros = $request->except('_token');
+        $pesquisa = $request->pesquisa;
+
+        if ($ordenacao == 1){
+            $ordenacao = 'produtos.nome';
+            $ordenacao2 = 'asc';
+            $filtros['ordenacao'] = 1;
+        } else if($ordenacao == 2){
+            $ordenacao =  'produtos.precoVendaAtual';
+            $ordenacao2 = 'asc';
+            $filtros['ordenacao'] = 2;
+        } else{
+            $ordenacao = 'produtos.precoVendaAtual';
+            $ordenacao2 = 'desc';
+            $filtros['ordenacao'] = 3;
+        }
+
+        if(isset($pesquisa)){
+            $produtos = DB::table('produtos')
+                        ->join('estoques', 'produtos.id', '=', 'estoques.produto')
+                        ->join('marcas', 'produtos.marca', '=', 'marcas.id')
+                        ->join('categorias', 'produtos.categoria', '=', 'categorias.id')
+                        ->whereNull('produtos.deleted_at')
+                        ->whereNull('estoques.deleted_at')
+                        ->whereNull('categorias.deleted_at')
+                        ->whereNull('marcas.deleted_at')
+                        ->where('produtos.nome', 'like', '%'.$pesquisa.'%')
+                        ->select('produtos.*', DB::raw('SUM(estoques.quantidade) as quantidade'))
+                        ->groupBy('produtos.id')
+                        ->orderBy($ordenacao, $ordenacao2)->paginate(6);
+            $carrinho = true;
+            return view('principal.index', compact('produtos', 'carrinho', 'filtros', 'pesquisa'));
+        } else {
+            $produtos = DB::table('produtos')
+                            ->join('estoques', 'produtos.id', '=', 'estoques.produto')
+                            ->join('marcas', 'produtos.marca', '=', 'marcas.id')
+                            ->join('categorias', 'produtos.categoria', '=', 'categorias.id')
+                            ->whereNull('produtos.deleted_at')
+                            ->whereNull('estoques.deleted_at')
+                            ->whereNull('categorias.deleted_at')
+                            ->whereNull('marcas.deleted_at')
+                            ->select('produtos.*', DB::raw('SUM(estoques.quantidade) as quantidade'))
+                            ->groupBy('produtos.id')
+                            ->orderBy($ordenacao, $ordenacao2)->paginate(6);
+                $carrinho = true;
+                return view('principal.index', compact('produtos', 'carrinho', 'filtros'));
+        }
+    }
+
     public function list_vendas(){
+        $filtros = ['periodo' => 9999, 'ordenacao' => 1];
+
         $vendas = Venda::withTrashed()->orderBy('id', 'desc')->paginate(10);
-        return view('listar.vendas', compact('vendas'));
+        return view('listar.vendas', compact('vendas', 'filtros'));
+    }
+
+    public function list_filt_vendas(Request $request){
+        $ordenacao = $request->ordenacao;
+        $periodo = $request->periodo;
+        $filtros = $request->except('_token');
+        $pesquisa = $request->pesquisa;
+
+        if ($ordenacao == 1){
+            $ordenacao = 'desc';
+        } else{
+            $ordenacao = 'asc';
+        }
+
+        date_default_timezone_set('America/Sao_Paulo');
+        $dataAtual = date('Y-m-d H:i:s');
+        $segundosAtual = strtotime($dataAtual);
+        $dataLimite = date("Y-m-d H:i:s", ($segundosAtual - ($periodo * 86400)));
+
+        if(isset($pesquisa) && $periodo == 9999){
+            $vendas = Venda::withTrashed()
+                        ->where('vendas.nomeRecebedor', 'like', '%'.$pesquisa.'%')
+                        ->orderBy('id', $ordenacao)->paginate(10);
+            return view('listar.vendas', compact('vendas', 'filtros', 'pesquisa'));
+        } else if($periodo == 9999){
+            $vendas = Venda::withTrashed()
+                        ->orderBy('id', $ordenacao)->paginate(10);
+            return view('listar.vendas', compact('vendas', 'filtros', 'pesquisa'));
+        } else if(isset($pesquisa)){
+            $vendas = Venda::withTrashed()
+            ->where('vendas.nomeRecebedor', 'like', '%'.$pesquisa.'%')
+            ->where('vendas.created_at', '>=', $dataLimite)
+            ->orderBy('id', $ordenacao)->paginate(10);
+            return view('listar.vendas', compact('vendas', 'filtros', 'pesquisa'));
+        } else {
+            $vendas = Venda::withTrashed()
+            ->where('vendas.created_at', '>=', $dataLimite)
+            ->orderBy('id', $ordenacao)->paginate(10);
+            return view('listar.vendas', compact('vendas', 'filtros', 'pesquisa'));
+        }
+        
     }
 
     public function list_fechar_pedido(Request $request){
