@@ -111,8 +111,15 @@
                                                         <td class="text-end">{{$item->modoRecebimento}}</td>
                                                     </tr>
                                                     <tr>
+                                                        <th class="text-end" colspan="3">Status:</th>
+                                                        <td class="text-end" colspan="3">{{$item->statusEntrega}}</td>
+                                                    </tr>
+                                                    <tr>
                                                         <th class="text-end" colspan="5">
-                                                        <button class="btn btn-outline-warning ">Ver detalhes</button>
+                                                            <form action="/detalhesPedido/{{$item->id}}" method="get">
+                                                                @csrf
+                                                                <button class="btn btn-outline-warning " type="submit">Ver detalhes</button>
+                                                            </form>
                                                         </th>
                                                     </tr>
                                                 </tfoot>

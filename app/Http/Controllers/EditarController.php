@@ -402,5 +402,75 @@ class EditarController extends Controller
             
 
     }
+    //usuário cancelando o pedido que fez
+    public function store_pedido(Request $request){
+        $pedido = Venda::find($request->id);
+        if($pedido){
+            //separando a quantidade dos produtos em estoque
+            $produtoEstoque = $pedido->getItens;
+            if($pedido->statusEntrega != "Em preparação." && $pedido->statusEntrega != "Aguardando pix."){
+                $request->session()->flash('erro', "Não é possível cancelar o pedido pelo sistema, entre em contato com a farmácia.");
+                return redirect()->route('listarDetalhesPedido', [$request->id]);
+            } else {
+                $pedido->statusentrega = "Cancelado.";
+                $pedido->descDelete = "Cancelado pelo cliente.";
+                $pedido->save();
+                $pedido->delete();
+
+                //repondo valores no estoque
+                foreach ($produtoEstoque as $item) {
+                    //pegar todos os estoques
+                    $idEstoque = $item->getProduto->getAllEstoques;
+                    //dd($idEstoque);
+                    //Pegar o último estoque cadastrado
+                    $estoqueId = 0;
+                    foreach ($idEstoque as $estoque) {
+                        $estoqueId = $estoque->id;
+                    }
+                    $qtd = Estoque::withTrashed()->where('id', $estoqueId)->get();
+
+                    if(!is_null($qtd[0]->deleted_at)){
+                        Estoque::withTrashed()->where('id', $estoqueId)->update([
+                            'deleted_at' => NULL
+                        ]);
+
+                    }
+
+                    $qtdTotal = $qtd[0]->quantidade + $item->quantidade;
+                    Estoque::withTrashed()->where('id', $estoqueId)->update([
+                        'quantidade' => $qtdTotal
+                    ]);
+                }
+                
+                $request->session()->flash('mensagem', "Pedido cancelado com sucesso!");
+                return redirect()->route('listarDetalhesPedido', [$request->id]);
+            }
+        } else {
+            $request->session()->flash('erro', "Ocorreu um erro, tente novamente!");
+            return redirect()->route('listarDetalhesPedido', [$request->id]);
+        }
+    }
+
+    public function cancelar_venda(Request $request){
+
+            //dd($request->motivo);
+
+        $venda = Venda::find($request->id);
+            if(!is_null($venda)){
+            //implementar motivo
+            $motivo = $request->motivo;
+
+            $venda->descDelete = $motivo;
+            $venda->statusEntrega = "Cancelado.";
+            $venda->save();
+            $venda->delete();
+
+            $request->session()->flash('mensagem', "Venda cancelada com sucesso!");
+            return redirect()->route('listarVendas');
+        } else {
+            $request->session()->flash('erro', "Algo deu errado, tente novamente!");
+            return redirect()->route('listarVendas');
+        }
+    }
 
 }

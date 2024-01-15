@@ -82,7 +82,7 @@
                     }
                 ?>
                     <tr>
-                        <th>{{$venda->id}}</th>
+                        <th id="venda">{{$venda->id}}</th>
                         <th>{{$venda->nomeRecebedor}}</th>
                         <th>{{$qtdProdutos}}</th>
                         <th class="precoVendaAtual">{{$total}}</th>
@@ -101,10 +101,30 @@
                                 <button class="btn btn-warning btn-sm mb-2"> <i class="fa-solid fa-pen-to-square"></i> Editar</button>
                             </form>
                             @if($cancelada != 1)
-                            <form  class="deleteAlert" action="/removerVenda/{{ $venda->id }}" method="POST">
-                                @csrf
-                                <button type="submit" class="btn btn-danger btn-sm"> <i class="fas fa-trash"></i> Excluir</button>    
-                            </form>
+                                <a href="#delete{{$venda->id}}" data-bs-toggle="modal" class="btn btn-danger btn-sm"> <i class="fas fa-trash"></i> Cancelar</a>    
+
+                                <!-- MODAL --> 
+                                <div class="modal fade" id="delete{{$venda->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Cancelar venda</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                            <div class="modal-body ">
+                                            <form action="/removerVenda/{{$venda->id}}" method="POST">
+                                                @csrf
+                                                <p class=" d-flex justify-content-center">Informe o motivo do cancelamento da venda {{$venda->id}}:</p>
+                                                <input type="text" name="motivo" style="width: 100%;">
+                                                </div>
+                                                <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                                                <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Salvar</button>
+                                            </form>
+                                            </div>
+                                    </div>
+                                    </div>
+                                </div>
                             @endif
                             </th>
                     </tr>
@@ -126,7 +146,8 @@
             </div>
         </div>
     @endif
-    
+   
+
 </div>
 </div>
 @endsection

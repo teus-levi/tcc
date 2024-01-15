@@ -19,6 +19,10 @@ class Produto extends Model
         return $this->hasMany(Estoque::class, 'produto');
     }
 
+    public function getAllEstoques(){
+        return $this->hasMany(Estoque::class, 'produto')->withTrashed();
+    }
+
     public function getMarca(){
         return $this->belongsTo(Marca::class, 'marca', 'id');
     }

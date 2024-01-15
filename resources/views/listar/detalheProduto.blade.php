@@ -60,10 +60,12 @@
                         @livewire('botao-carrinho-produto', ['produto' => $produto[0]->id])
             
     
-            
-                <button class="btn-buy btn btn-outline-secondary w-100 mt-4" type="button" onclick="onClickBuyBtn(this, event)">
-                    Comprar
-                </button>
+                <form action="/comprar" method="get">
+                    <button class="btn-buy btn btn-outline-success w-100 mt-4" name="produto" value="{{$produto[0]->id}}" type="submit" onclick="onClickBuyBtn(this, event)">
+                        Comprar
+                    </button>
+                </form>
+                
     </div>
             <div id="product-accordion" class="accordion mb-5">
         
@@ -78,26 +80,9 @@
                         <div class="accordion-body">
                             
                                 <div class="product-description rte">
-                                    <p><span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis ac leo eget dolor ultricies feugiat. In facilisis urna massa, nec ultricies est mollis eget. Ut tempus ligula a sem ultrices, vel fringilla ipsum cursus. </span></p>
-                                    <p><span>Ut sit amet metus id ante euismod tincidunt. Donec quis orci non enim congue rutrum. </span><span>Cras mollis ultrices orci sed tincidunt. Aliquam rhoncus a ex non pharetra.&nbsp;<meta charset="utf-8">Cras consectetur ultricies augue non porttitor.</span></p>
-                                    <h6>Features</h6>
-                                    <ul>
-                                        <li>
-                                        <meta charset="utf-8"> <span>Maecenas quam urna, bibendum sit amet consequat vitae</span>
-                                        </li>
-                                        <li>
-                                        <meta charset="utf-8"> <span data-mce-fragment="1">Suspendisse imperdiet tellus quis odio ultrices ultrices</span><br>
-                                        </li>
-                                        <li>
-                                        <meta charset="utf-8"> <span>Vivamus faucibus finibus tellus eget elementum.</span>
-                                        </li>
-                                        <li>
-                                        <meta charset="utf-8"> <span>Vivamus id lobortis massa, in suscipit risus.</span>
-                                        </li>
-                                        <li>
-                                        <meta charset="utf-8"> <span>Ut sit amet metus id ante euismod tincidunt.&nbsp;&nbsp;</span>
-                                        </li>
-                                    </ul>
+                                    <p>
+                                        {{$produto[0]->descricao}}
+                                    </p>
                                 </div>
                             
                         </div>
@@ -116,7 +101,8 @@
                         <div class="accordion-body">
                             
                                 <div class="description rte">
-                                    <p>Feel free to create additional blocks like this for <strong>Shipping, Payments, etc </strong>through the Shopify Theme editor. Also, you may easily adjust their order by dragging and dropping.</p>
+                                    <p>Não realizamos retorno do valor após produto aberto ou passado mais de 1 dia da compra. 
+                                        Confira no momento da entrega se o produto condiz com o que foi pedido, caso não esteja correto, não abra o produto, apenas entre em contato para que seja feito o retorno.</p>
                                 </div>
                             
                         </div>

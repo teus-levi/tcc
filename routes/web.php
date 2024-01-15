@@ -59,10 +59,14 @@ Route::middleware('auth')->group(function(){
     //Route::get('/fecharPedido/{id}', [ListarController::class, 'list_fechar_pedido'])->name('fecharPedido');
 
     Route::get('/pedidos', [ListarController::class, 'list_pedidos'])->name('listarPedidos');
+    Route::get('/detalhesPedido/{id}', [ListarController::class, 'list_detalhes_ped'])->name('listarDetalhesPedido');
     Route::get('/formaPagamento', [ListarController::class, 'list_pagamento'])->name('formaPagamento');
     Route::any('/filtrarPedidos', [ListarController::class, 'list_filt_pedidos'])->name('filtrarPedidos');
-    Route::any('/filtrarHome', [ListarController::class, 'list_filt_home'])->name('filtrarHome');
-    Route::any('/filtrarVendas', [ListarController::class, 'list_filt_vendas'])->name('filtrarVendas');
+    Route::any('/filtrarVendas', [ListarController::class, 'list_filt_vendas'])->name('filtrarVendas')->middleware('can:administrador');
+    Route::any('/filtrarProdutos', [ListarController::class, 'list_filt_prod'])->name('filtrarProdutos')->middleware('can:administrador');
+    Route::any('/filtrarMarcas', [ListarController::class, 'list_filt_marcas'])->name('filtrarMarcas')->middleware('can:administrador');
+    Route::any('/filtrarCategorias', [ListarController::class, 'list_filt_categorias'])->name('filtrarCategorias')->middleware('can:administrador');
+    Route::any('/filtrarAdministradores', [ListarController::class, 'list_filt_adm'])->name('filtrarAdministradores')->middleware('can:administrador');
 
     Route::post('/editarProduto/{id}', [EditarController::class, 'edit_prod'])->name('editarProduto')->middleware('can:administrador');
     Route::post('/editarMarca/{id}', [EditarController::class, 'edit_marca'])->name('editarMarca')->middleware('can:administrador');
@@ -74,6 +78,7 @@ Route::middleware('auth')->group(function(){
     Route::post('/storeEditCategoria/{id}', [EditarController::class, 'store_categoria'])->name('salvarEditCategoria')->middleware('can:administrador');
     Route::post('/storeEditEstoque/{id}', [EditarController::class, 'store_estoque'])->name('salvarEditEstoque')->middleware('can:administrador');
     Route::post('/storeEditVenda/{id}', [EditarController::class, 'store_venda'])->name('salvarEditVenda')->middleware('can:administrador');
+    Route::post('/storeEditPedido/{id}', [EditarController::class, 'store_pedido'])->name('salvarEditVenda')->middleware('can:administrador');
     Route::POST('/storePerfil/{id}', [EditarController::class, 'store_perfil'])->name('salvarPerfil');
     Route::POST('/storeEndereco/{id}', [EditarController::class, 'store_endereco'])->name('salvarEndereco');
     Route::POST('/storeSenha', [EditarController::class, 'store_senha'])->name('salvarSenha');
@@ -86,12 +91,16 @@ Route::middleware('auth')->group(function(){
     Route::post('/removerEstoque/{id}', [EditarController::class, 'delete_estoque'])->name('removerEstoque')->middleware('can:administrador');
     Route::post('/removerMarca/{id}', [EditarController::class, 'delete_marca'])->name('removerMarca')->middleware('can:administrador');
     Route::post('/removerCategoria/{id}', [EditarController::class, 'delete_categoria'])->name('removerCategoria')->middleware('can:administrador');
+    Route::post('/removerVenda/{id}', [EditarController::class, 'cancelar_venda'])->name('removerVenda')->middleware('can:administrador');
+    //Route::delete('/removerVenda/{id}', ['as' => 'venda.delete', 'vendas' => 'EditController@cancelar_venda'])->middleware('can:administrador');
 
 });
 
 
 Route::get('/carrinho', [ListarController::class, 'list_carrinho'])->name('listarCarrinho');
+Route::get('/comprar', [ListarController::class, 'list_compra'])->name('listarCompra');
 Route::get('/detalheProduto/{id}', [ListarController::class, 'detalhe_prod'])->name('detalheProduto');
+Route::any('/filtrarHome', [ListarController::class, 'list_filt_home'])->name('filtrarHome');
 
 
 

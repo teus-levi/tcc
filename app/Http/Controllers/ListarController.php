@@ -54,7 +54,9 @@ class ListarController extends Controller
                             ->orderBy('quantidade', 'asc')->paginate(10);
             //dd($produtos);
 
-            return view('listar.produtos', compact('produtos'));
+            $filtros = ['periodo' => 9999, 'ordenacao' => 1];
+
+            return view('listar.produtos', compact('produtos', 'filtros'));
         } else{
             return redirect('/home');
         }
@@ -68,7 +70,7 @@ class ListarController extends Controller
         ->whereNull('produtos.deleted_at')
         ->where('estoques.produto', '=', $request->id)
         ->select('estoques.*', 'produtos.nome as n_produto')
-        ->orderBy('estoques.id', 'desc')->get();
+        ->orderBy('estoques.id', 'desc')->paginate(10);
         foreach ($est as $item) {
             if(!is_null($item)){
                 return view('listar.estoque', compact('est'));
@@ -80,7 +82,6 @@ class ListarController extends Controller
     }
 
     public function detalhe_prod(Request $request){
-        if(Auth::check()){
             //$produto = Produto::find($request->id);
             $produto = DB::table('produtos')
                     ->join('marcas', 'produtos.marca', '=', 'marcas.id')
@@ -102,20 +103,135 @@ class ListarController extends Controller
                     ->orderBy('categorias.id')
                     ->get();
             return view('listar.detalheProduto', compact('produto', 'produtosCategoria'));
-        }
     }
 
     public function list_marcas(){
         $marcas = Marca::query()->OrderBy('id')->paginate(10);
-        return view('listar.marcas', compact('marcas'));
+        $periodo = 9999;
+        $ordenacao = 1;
+        $filtros = ['periodo' => $periodo, 'ordenacao' => $ordenacao];
+
+        return view('listar.marcas', compact('marcas', 'filtros'));
+    }
+
+    public function list_filt_marcas(Request $request){
+        $ordenacao = $request->ordenacao;
+        $periodo = $request->periodo;
+        $filtros = $request->except('_token');
+        $pesquisa = $request->pesquisa;
+
+        date_default_timezone_set('America/Sao_Paulo');
+        $dataAtual = date('Y-m-d H:i:s');
+        $segundosAtual = strtotime($dataAtual);
+        $dataLimite = date("Y-m-d H:i:s", ($segundosAtual - ($periodo * 86400)));
+
+        if ($ordenacao == 1){
+            $ordenacao = 'desc';
+        } else{
+            $ordenacao = 'asc';
+        }
+
+        if($periodo == 9999){
+            $dataLimite = 0;
+        }
+
+        if(isset($pesquisa)){
+            $marcas = DB::table('marcas')
+            ->whereNull('marcas.deleted_at')
+            ->where('marcas.created_at', '>=', $dataLimite)
+            ->where('marcas.nome', 'like', '%'. $pesquisa . '%')
+            ->select('marcas.*')
+            ->orderBy('marcas.nome', $ordenacao)->paginate(10);
+
+            return view('listar.marcas', compact('marcas', 'filtros'));
+        } else {
+            $marcas = DB::table('marcas')
+            ->whereNull('marcas.deleted_at')
+            ->where('marcas.created_at', '>=', $dataLimite)
+            ->where('marcas.nome', 'like', '%'. $pesquisa . '%')
+            ->select('marcas.*')
+            ->orderBy('marcas.nome', $ordenacao)->paginate(10);
+
+            return view('listar.marcas', compact('marcas', 'filtros'));
+        }
     }
 
     public function list_categorias(){
         $categorias = Categoria::query()->OrderBy('id')->paginate(10);
-        return view('listar.categorias', compact('categorias'));
+
+        $periodo = 9999;
+        $ordenacao = 1;
+        $filtros = ['periodo' => $periodo, 'ordenacao' => $ordenacao];
+
+        return view('listar.categorias', compact('categorias', 'filtros'));
+    }
+
+    public function list_filt_categorias(Request $request){
+        $ordenacao = $request->ordenacao;
+        $periodo = $request->periodo;
+        $filtros = $request->except('_token');
+        $pesquisa = $request->pesquisa;
+
+        date_default_timezone_set('America/Sao_Paulo');
+        $dataAtual = date('Y-m-d H:i:s');
+        $segundosAtual = strtotime($dataAtual);
+        $dataLimite = date("Y-m-d H:i:s", ($segundosAtual - ($periodo * 86400)));
+
+        if ($ordenacao == 1){
+            $ordenacao = 'desc';
+        } else{
+            $ordenacao = 'asc';
+        }
+
+        if($periodo == 9999){
+            $dataLimite = 0;
+        }
+
+        if(isset($pesquisa)){
+            $categorias = DB::table('categorias')
+            ->whereNull('categorias.deleted_at')
+            ->where('categorias.created_at', '>=', $dataLimite)
+            ->where('categorias.nome', 'like', '%'. $pesquisa . '%')
+            ->select('categorias.*')
+            ->orderBy('categorias.nome', $ordenacao)->paginate(10);
+
+            return view('listar.categorias', compact('categorias', 'filtros'));
+        } else {
+            $categorias = DB::table('categorias')
+            ->whereNull('categorias.deleted_at')
+            ->where('categorias.created_at', '>=', $dataLimite)
+            ->where('categorias.nome', 'like', '%'. $pesquisa . '%')
+            ->select('categorias.*')
+            ->orderBy('categorias.nome', $ordenacao)->paginate(10);
+
+            return view('listar.categorias', compact('categorias', 'filtros'));
+        }
     }
 
     public function list_carrinho(){
+        return view('listar.carrinho');
+    }
+
+    public function list_compra(Request $request){
+        $produto = Produto::find($request->produto);
+        $marca = Marca::find($produto->marca);
+
+        $cart = session()->get('cart', []);
+        if(isset($cart[$request->produto])){
+            $cart[$request->produto]['quantidade']++;
+            $total += $produto->precoVendaAtual;
+            
+        } else {
+            $cart[$request->produto] = [
+                "id" => $produto->id,
+                "nome" => $produto->nome,
+                "marca" => $marca->nome,
+                "quantidade" => 1,
+                "preco" => $produto->precoVendaAtual,
+                "imagem" => $produto->imagem
+            ];
+        }
+        session()->put('cart', $cart);
         return view('listar.carrinho');
     }
 
@@ -129,8 +245,6 @@ class ListarController extends Controller
         }
         $pedidos = DB::table('vendas')
                         ->join('itens_vendas', 'vendas.id', '=', 'itens_vendas.venda')
-                        ->whereNull('vendas.deleted_at')
-                        ->whereNull('itens_vendas.deleted_at')
                         ->where('vendas.cliente', '=', $cliente[0]->id)
                         ->select('vendas.*')
                         ->groupBy('vendas.id')
@@ -140,13 +254,29 @@ class ListarController extends Controller
         $itensPedidos = DB::table('vendas')
                         ->join('itens_vendas', 'vendas.id', '=', 'itens_vendas.venda')
                         ->join('produtos', 'produtos.id', '=', 'itens_vendas.produto')
-                        ->whereNull('vendas.deleted_at')
-                        ->whereNull('itens_vendas.deleted_at')
                         ->where('vendas.cliente', '=', $cliente[0]->id)
                         ->select('itens_vendas.*', 'produtos.id', 'produtos.nome')
                         ->orderBy('itens_vendas.venda')
                         ->get();
         return view('listar.pedidos', compact('pedidos', 'itensPedidos', 'filtros'));
+    }
+
+    public function list_detalhes_ped(Request $request){
+        $id = $request->id;
+        //dd($id);
+        $cliente = Cliente::where('usuario', '=', Auth::id())->get();
+
+        $pedido = Venda::withTrashed()->find($id);
+
+        //dd($cliente[0]->id);
+
+        if($pedido->cliente == $cliente[0]->id){
+            return view('listar.pedidoDetalhado', compact('pedido'));
+        } else {
+            $request->session()->flash('erro', "Usuário inválido para o processo.");
+            return redirect('/home');
+        }
+
     }
 
     public function list_pagamento(Request $request){
@@ -321,9 +451,90 @@ class ListarController extends Controller
         
     }
 
+    public function list_filt_prod(Request $request){
+        $ordenacao = $request->ordenacao;
+        $periodo = $request->periodo;
+        $filtros = $request->except('_token');
+        $pesquisa = $request->pesquisa;
+
+        date_default_timezone_set('America/Sao_Paulo');
+        $dataAtual = date('Y-m-d H:i:s');
+        $segundosAtual = strtotime($dataAtual);
+        $dataLimite = date("Y-m-d H:i:s", ($segundosAtual - ($periodo * 86400)));
+
+        if ($ordenacao == 1){
+            $ordenacao = 'desc';
+        } else{
+            $ordenacao = 'asc';
+        }
+
+        if($periodo == 9999){
+            $dataLimite = 0;
+        }
+
+        if(isset($pesquisa)){
+            $produtos = DB::table('produtos')
+            ->leftJoin('estoques', 'produtos.id', '=', 'estoques.produto')
+            ->join('categorias', 'categorias.id', '=', 'produtos.categoria')
+            ->join('marcas', 'marcas.id', '=', 'produtos.marca')
+            ->whereNull('produtos.deleted_at')
+            ->where('produtos.created_at', '>=', $dataLimite)
+            ->where('produtos.nome', 'like', '%'. $pesquisa . '%')
+            ->select('produtos.*', DB::raw('SUM(estoques.quantidade) as quantidade'), 
+            'categorias.nome as n_categoria', 'marcas.nome as n_marca')
+            ->groupBy('produtos.id')
+            ->orderBy('produtos.nome', $ordenacao)->paginate(10);
+
+            return view('listar.produtos', compact('produtos', 'filtros'));
+        } else {
+            $produtos = DB::table('produtos')
+            ->leftJoin('estoques', 'produtos.id', '=', 'estoques.produto')
+            ->join('categorias', 'categorias.id', '=', 'produtos.categoria')
+            ->join('marcas', 'marcas.id', '=', 'produtos.marca')
+            ->whereNull('produtos.deleted_at')
+            ->where('produtos.created_at', '>=', $dataLimite)
+            ->select('produtos.*', DB::raw('SUM(estoques.quantidade) as quantidade'), 
+            'categorias.nome as n_categoria', 'marcas.nome as n_marca')
+            ->groupBy('produtos.id')
+            ->orderBy('produtos.nome', $ordenacao)->paginate(10);
+
+            return view('listar.produtos', compact('produtos', 'filtros'));
+        }
+
+            
+    }
+
     public function list_fechar_pedido(Request $request){
         $venda = Venda::find($request->id);
         return view('listar.fecharPedido', compact('venda'));
+    }
+
+    public function list_filt_adm(Request $request){
+        $ordenacao = 'asc';
+        $pesquisa = $request->pesquisa;
+
+        $filtros = ['pesquisa' => $pesquisa];
+
+
+        if(isset($pesquisa)){
+            $usuarios = DB::table('users')
+            ->whereNull('users.deleted_at')
+            ->where('users.name', 'like', '%'. $pesquisa . '%')
+            ->orWhere('users.email', 'like', '%'. $pesquisa . '%')
+            ->whereNull('users.deleted_at')
+            ->select('users.*')
+            ->orderBy('users.name', $ordenacao)->paginate(10);
+            $filtro['pesquisa'] = $pesquisa;
+            return view('registros.administradores', compact('usuarios', 'filtros'));
+
+        } else {
+            $usuarios = DB::table('users')
+            ->whereNull('users.deleted_at')
+            ->select('users.*')
+            ->orderBy('users.name', $ordenacao)->paginate(10);
+
+            return view('registros.administradores', compact('usuarios', 'filtros'));
+        }
     }
 
 }

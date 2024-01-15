@@ -42,23 +42,30 @@ class RegistrarController extends Controller
                 }
                 
             }
-            //salva a imagem em storage, na pasta produto
-            $img = $request->file('imagem')->store('produto');
+            //validação de nome
+            $nome = Produto::query()->withTrashed()->where('nome', '=', $request->nome)->get();
+            if(!isset($nome[0])){
+                //salva a imagem em storage, na pasta produto
+                $img = $request->file('imagem')->store('produto');
 
-            $user = Auth::user();
-            $dados = $request->all();
-            $dados += ["administrador" => $user->id];
+                $user = Auth::user();
+                $dados = $request->all();
+                $dados += ["administrador" => $user->id];
 
-            $dados["imagem"] = $img;
+                $dados["imagem"] = $img;
 
-            //Formatar valor para o banco
-            $pontuacao = array(".", ",");
-            $dados['precoVendaAtual'] = str_replace($pontuacao, "", $dados['precoVendaAtual']);
+                //Formatar valor para o banco
+                $pontuacao = array(".", ",");
+                $dados['precoVendaAtual'] = str_replace($pontuacao, "", $dados['precoVendaAtual']);
 
-            //dd($dados);
-            Produto::create($dados);
-            $request->session()->flash('mensagem', "Produto registrado com sucesso!");
-            return redirect('registrarProdutos');
+                //dd($dados);
+                Produto::create($dados);
+                $request->session()->flash('mensagem', "Produto registrado com sucesso!");
+                return redirect('registrarProdutos');
+            } else{
+                $request->session()->flash('erro', "Produto com o nome {$request->nome} já existe, use ou ative o existente!");
+                return redirect('registrarProdutos');
+            }
         }else {
             $request->session()->flash('erro', "Imagem deve ser selecionada!");
             return redirect('registrarProdutos');
@@ -115,7 +122,8 @@ class RegistrarController extends Controller
 
     public function reg_administradores(){
         if(Auth::check()){            
-            $usuarios = User::query()->orderBy('id')->get();
+            $usuarios = User::query()->orderBy('id')->paginate(10);
+            
             return view('registros.administradores', compact('usuarios'));
 
         } else{
