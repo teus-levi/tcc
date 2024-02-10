@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\RegisterEmail;
 use App\Rules\CPF;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rules\Password;
 
 class EditarController extends Controller
 {
@@ -282,9 +283,13 @@ class EditarController extends Controller
                     ->withErrors($validator);
                 }
 */
+
             if(!empty($dadosApi['erro'])){
                 $request->session()->flash('erro', "O CEP está incorreto, por isso o endereço informado não foi salvo. Tente novamente.");
-            } elseif(!empty($dadosApi['logradouro'])){
+            }else if($dadosApi['localidade'] != "Umuarama"){
+                $request->session()->flash('erro', "No momento atendemos apenas a cidade de Umuarama. Em breve teremos novas localidades.");
+            }
+            elseif(!empty($dadosApi['logradouro']) && !empty($dadosApi['bairro'])){
                 //update no banco
                 Cliente::where('usuario', $request->id)->update([
                     'CEP' => $cep,
@@ -298,7 +303,9 @@ class EditarController extends Controller
             } else{
                 if(is_null($request->logradouro)){
                     $request->session()->flash('erro', "Preencha o campo de logradouro!");
-                } else{
+                } else if(is_null($request->bairro)){
+                    $request->session()->flash('erro', "Preencha o campo do bairro!");
+                } else {
                     //update no banco
                     Cliente::where('usuario', $request->id)->update([
                         'CEP' => $cep,
@@ -329,7 +336,19 @@ class EditarController extends Controller
         if(Auth::check()){
             //validando informações
             //dd($request->all());
-            if($request->password == $request->confirmarSenha) {
+            $dados = $request->all();
+            $validator = Validator::make($dados, [
+                'password' => ['required', 'confirmed', Password::min(8)->numbers()->mixedCase()->symbols()],
+                'password_confirmation' => 'required',
+            ]
+            );
+            //dd($validator->errors()->all());
+
+                if($validator->fails()){
+                    return redirect('/senha')
+                    ->withErrors($validator);
+                }else{
+
                 //update no banco
                 $id = Auth::id();
                 $senha = Hash::make($request->password);
@@ -338,14 +357,10 @@ class EditarController extends Controller
                 ]);
                 $request->session()->flash('mensagem', "Senha editada com sucesso!");
                 return redirect('/senha');
-            }else {
-                $request->session()->flash('erro', "As senhas estão diferentes, informe novamente.");
-                return redirect('/senha');
+                }
+        }   else {
+                return redirect()->route('login');
             }
-
-        } else {
-            return redirect()->route('login');
-        }
     }
 
     public function edit_perfil(){

@@ -27,6 +27,30 @@
                     </a>
                 </div>
             </div>
+
+            @if($errors->any())
+                <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Erro!</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{$error}}</li>
+                                @endforeach
+                            </ul>
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             <div class="col-8">
                 <form class="col-sm-12 col-md-8 col-lg-6" action="/storeSenha" method="POST">
                     @csrf
@@ -37,7 +61,7 @@
                     </div>
 
                     <div class="form-floating mb-3">
-                        <input type="password" name="confirmarSenha" id="txtConfSenha" class="form-control" placeholder=" ">
+                        <input type="password" name="password_confirmation" id="txtConfSenha" class="form-control" placeholder=" ">
                         <label for="txtConfSenha">Redigite aqui a nova senha</label>
                     </div>
 
@@ -47,12 +71,16 @@
         </div>
     </div>
 </main>
-@push('formatar_script')
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js" integrity="sha512-pHVGpX7F/27yZ0ISY+VVjyULApbDlD0/X0rgGbTqCE7WFW5MezNTWG/dnhtbBuICzsd0WQPgpE4REBLv+UqChw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script>
-    $('.cpf').mask('000.000.000-00');
-    $('.telefone').mask('(00) 00000-0000');
+
+@push('validacao')
+@if($errors->any())
+<script>
+    var myModal = new bootstrap.Modal(document.getElementById('exampleModal2'), {
+        keyboard: false
+    })
+    myModal.show();
 </script>
+@endif
 @endpush
 
 @endsection
