@@ -9,7 +9,7 @@
 
 
     <h2 style="margin-left: 0%;" class="text-center">Estoque</h2>
-    
+
 
 
     <div class="container">
@@ -46,7 +46,7 @@
                 </div>
             </div>
             <div class="text-center mt-3">
-                <button type="submit" class="bnt bnt-primary">Salvar</button>
+                <button type="submit" class="btn btn-success">Salvar</button>
             </div>
         </form>
     </div>

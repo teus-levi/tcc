@@ -113,18 +113,16 @@
                                 <form action="/registrarEstoque/{{ $item->id }}" method="POST">
                                     @csrf
                                     <th>
-                                        <form action="/registrarEstoque/{{$item->id}}" method="post">
-                                            <button class="btn btn-success btn-sm"> <i class="fas fa-user-plus"></i> Adicionar</button>
-                                         </form>
+                                        <button class="btn btn-success"> <i class="fa-solid fa-plus fa-xs"></i></button>
                                     </th>
                                 </form>
                             @else
                                 <th>
                                 <form action="/listarEstoque/{{ $item->id }}" method="GET">
                                     @csrf
-                                    <button class="btn btn-warning btn-sm mb-2"> <i class="fas fa-list fa-lg"></i></button>
+                                    <button class="btn btn-warning mb-2"> <i class="fas fa-list fa-xs"></i></button>
                                 </form>
-                                    <form action="/registrarProdutos" method="get">
+                                    <form action="/registrarEstoque/{{ $item->id }}" method="post">
                                         @csrf
                                         <button class="btn btn-success">
                                             <i class="fa-solid fa-plus fa-xs"></i>
@@ -135,11 +133,11 @@
                             <th>
                                     <form action="/editarProduto/{{ $item->id }}" method="POST">
                                         @csrf
-                                        <button class="btn btn-warning btn-sm mb-2"> <i class="fa-solid fa-pen-to-square"></i></button>
+                                        <button class="btn btn-warning mb-2"> <i class="fa-solid fa-pen-to-square fa-xs"></i></button>
                                     </form>
                                     <form  class="deleteAlert" action="/removerProduto/{{ $item->id }}" method="POST">
                                         @csrf
-                                        <button type="submit" class="btn btn-danger btn-sm"> <i class="fas fa-times fa-lg"></i></button>
+                                        <button type="submit" class="btn btn-danger"> <i class="fas fa-times fa-xs"></i></button>
                                     </form>
                             </th>
                     </tr>

@@ -24,7 +24,7 @@
                 @else
                     <div class="w-100 col-12 col-md-6 d-flex justify-content-center">
                         <div class="input-group input-group w-25 me-3">
-                            <input type="text" name="pesquisa" class="form-control" placeholder="Digite aqui o nome do usuário">
+                            <input type="text" name="pesquisa" class="form-control" placeholder="Digite aqui o nome ou email">
                         </div>
                         <button type="submit" class="btn btn-primary w-25 ">Pesquisar</button>
                     </div>
@@ -33,7 +33,7 @@
         </div>
         </div>
 
-    
+
 
     <div class="text-center mt-3 w-75 mx-auto d-block">
                     <table class="tablesaw table-bordered table-hover table" data-tablesaw-mode="swipe" data-tablesaw-sortable data-tablesaw-sortable-switch data-tablesaw-minimap data-tablesaw-mode-switch>
