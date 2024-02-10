@@ -6,6 +6,14 @@ use App\Http\Controllers\RegistrarController;
 use App\Http\Controllers\RemoverController;
 use App\Http\Controllers\ListarController;
 use App\Http\Controllers\EditarController;
+use App\Http\Controllers\Mails\SendMails;
+use App\Http\Controllers\RelatorioController;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Events\PasswordReset;
+use App\Models\User;
 
 use Illuminate\Support\Facades\Route;
 
@@ -26,14 +34,59 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [LoginController::class, 'login'])->name('login');
 
 Route::get('/cadastrar', [CadastroController::class, 'create']);
-Route::post('/cadastrar2', [CadastroController::class, 'user']);
-Route::post('/cadastrar3', [CadastroController::class, 'farmaciaFinal']);
+Route::get('/cadastrar2', [CadastroController::class, 'user']);
+//Route::post('/cadastrar3', [CadastroController::class, 'farmaciaFinal']);
 Route::post('/storeCliente', [CadastroController::class, 'store']);
-Route::post('/storeFarmacia', [CadastroController::class, 'storeFarmacia']);
+
+//Route::post('/storeFarmacia', [CadastroController::class, 'storeFarmacia']);
 
 
 Route::post('/home', [LoginController::class, 'entrar']);
 Route::get('/home', [LoginController::class, 'pos_cad'])->name('home');
+
+Route::get('/recuperar-senha', function () {
+    return view('auth.forgot-password');
+})->middleware('guest')->name('password.request');
+
+Route::post('/forgot-password', function (Request $request) {
+    $request->validate(['email' => 'required|email']);
+
+    $status = Password::sendResetLink(
+        $request->only('email')
+    );
+
+    return $status === Password::RESET_LINK_SENT
+                ? back()->with(['status' => __($status)])
+                : back()->withErrors(['email' => __($status)]);
+})->middleware('guest')->name('password.email');
+
+Route::get('/reset-password/{token}', function ($token) {
+    return view('auth.reset-password', ['token' => $token]);
+})->middleware('guest')->name('password.reset');
+
+Route::post('/reset-password', function (Request $request) {
+    $request->validate([
+        'token' => 'required',
+        'email' => 'required|email',
+        'password' => 'required|min:8|confirmed',
+    ]);
+
+    $status = Password::reset(
+        $request->only('email', 'password', 'password_confirmation', 'token'),
+        function ($user, $password) {
+            $user->password = Hash::make($password);
+            $user->save();
+
+            $user->save();
+
+            event(new PasswordReset($user));
+        }
+    );
+
+    return $status === Password::PASSWORD_RESET
+                ? redirect()->route('login')->with('status', __($status))
+                : back()->withErrors(['email' => [__($status)]]);
+})->middleware('guest')->name('password.update');
 
 Route::middleware('auth')->group(function(){
 
@@ -94,6 +147,10 @@ Route::middleware('auth')->group(function(){
     Route::post('/removerVenda/{id}', [EditarController::class, 'cancelar_venda'])->name('removerVenda')->middleware('can:administrador');
     //Route::delete('/removerVenda/{id}', ['as' => 'venda.delete', 'vendas' => 'EditController@cancelar_venda'])->middleware('can:administrador');
 
+
+    Route::get('/enviar-email', [SendMails::class, 'sendMail'])->name('sendMail')->middleware('can:administrador');
+
+    Route::get('/relatorio/estoque', [RelatorioController::class, 'filtro_estoque'])->name('relatorioEstoque')->middleware('can:administrador');
 });
 
 

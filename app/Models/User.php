@@ -3,13 +3,15 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Notifications\PasswordResetNotification;
 
-class User extends Authenticatable
+class User extends Authenticatable implements CanResetPassword
 {
     use HasApiTokens, HasFactory, Notifiable;
     use SoftDeletes;
@@ -50,4 +52,11 @@ class User extends Authenticatable
     public function getCliente(){
         return $this->hasOne(Cliente::class, 'usuario');
     }
+
+    public function sendPasswordResetNotification($token)
+{
+    $url = 'http://localhost:8000/reset-password/' .$token;
+
+    $this->notify(new PasswordResetNotification($url));
+}
 }

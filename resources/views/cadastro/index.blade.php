@@ -36,27 +36,50 @@
     </div>
 @endif
 
-        <form action="/cadastrar2" method="post">
+@if($errors->any())
+<div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Erro!</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{$error}}</li>
+            @endforeach
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+        </div>
+      </div>
+    </div>
+    </div>
+@endif
+
+        <form action="/cadastrar2" method="get">
             @csrf
-            
+
             <div class="right-login">
                 <div class="card-login">
                     <h1>CADASTRO</h1>
                     <div class="textfield">
-                        <label for="email_cadastro">Email</label>
-                        <input type="email" name="email_cadastro" placeholder="Email">
+                        <label for="email">Email</label>
+                        <input type="email" name="email" placeholder="Email">
                     </div>
                     <div class="textfield">
-                        <label for="email_cadastro_confirmar">Confirmar email</label>
-                        <input type="email" name="email_cadastro_confirmar" placeholder="Confirmar email">
+                        <label for="email_confirmation">Confirmar email</label>
+                        <input type="email" name="email_confirmation" placeholder="Confirmar email">
                     </div>
                     <div class="textfield">
-                        <label for="senha_cadastro">Senha</label>
-                        <input type="password" name="senha_cadastro" placeholder="Senha">
+                        <label for="password">Senha</label>
+                        <input type="password" name="password" placeholder="Senha">
                     </div>
                     <div class="textfield">
-                        <label for="senha_cadastro_confirmar">Confirmar senha</label>
-                        <input type="password" name="senha_cadastro_confirmar" placeholder="Confirmar senha">
+                        <label for="password_confirmation">Confirmar senha</label>
+                        <input type="password" name="password_confirmation" placeholder="Confirmar senha">
                     </div>
                     <button class="btn-login" type="submit">Continuar</button>
                     <p>Etapa 1/2</p>
@@ -68,6 +91,23 @@
 @if(!empty($mensagem))
 <script>
     var myModal = new bootstrap.Modal(document.getElementById('exampleModal'), {
+        keyboard: false
+    })
+    myModal.show();
+    /*
+    if(window.Notification&&Notification.permission!=="denied"){
+        Notification.requestPermission(function(status){
+            let n = new Notification('Erro!', {
+                body: '{{ $mensagem }}'
+            })
+        })
+    }*/
+</script>
+@endif
+
+@if($errors->any())
+<script>
+    var myModal = new bootstrap.Modal(document.getElementById('exampleModal2'), {
         keyboard: false
     })
     myModal.show();

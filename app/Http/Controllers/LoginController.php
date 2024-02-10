@@ -13,11 +13,11 @@ class LoginController extends Controller
 {
     public function login(){
         session_start();
-        
+
             return view('login.index');
         }
 
-        
+
 
     public function autenticacao(Request $request){
         $email = $request->email;
@@ -41,7 +41,7 @@ class LoginController extends Controller
             if($autenticacao == 0){
                 return redirect('/');
             }
-        }    
+        }
     }
 
     public function entrar(Request $request){
@@ -49,7 +49,8 @@ class LoginController extends Controller
 
         //dd($request);
         if (!Auth::attempt($request->only('email', 'password'))){
-            return redirect()->back()->withErrors('Usuário/Senha inválido(s)');
+            $request->session()->flash('erro', "Usuário/Senha inválido(s)");
+            return redirect()->route('login');
         }
         /*
             $produtos = DB::table('produtos')
@@ -96,7 +97,7 @@ class LoginController extends Controller
             $carrinho = true;
             $filtros['ordenacao'] = 1;
             return view('principal.index', compact('produtos', 'carrinho', 'filtros'));
-        
+
     }
 
 }

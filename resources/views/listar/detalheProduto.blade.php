@@ -7,69 +7,69 @@
 
 @section('conteudo')
 
-    
+
     <div id="product-template" class="pt-5 pt-sm-10 pb-0 flex-fill">
         <div class="container">
             <div class="row g-3">
                 <div class="col-lg-6">
-                    
+
                     <img class="img-thumbnail" src="/storage/{{$produto[0]->imagem}}" alt="Bag Series 1">
                 </div>
                 <div class="col-lg-6">
                     <div id="product-content">
-                        
+
                             <p class="product-vendor text-muted my-1 text-uppercase">
                                 BabyOn
                             </p>
-                        
+
                         <h1 class="title mb-1 fw-bold">
                             {{$produto[0]->nome}}
                         </h1>
                         <p class="product-price fs-4 mb-2 fw-bold">
-                            
+
                                 <span class="product-price-final">
                                     R$
                                     <span class="precoVendaAtual product-price-final">
                                         {{$produto[0]->precoVendaAtual}}
                                     </span>
                                 </span>
-                            
-                            
-                            
-                        </p>
-     
-    <div class="form-wrapper mb-4 rounded bg-light p-6">
-            
-            
 
-                    
+
+
+                        </p>
+
+    <div class="form-wrapper mb-4 rounded bg-light p-6">
+
+
+
+
                         <div class="mb-3">
                             <label class="input-group-text" for="product-option-color">
                                 Marca: {{$produto[0]->n_marca}}
                             </label>
                         </div>
-                    
+
                         <div class="mb-3">
                             <label class="input-group-text" for="product-option-size">
                                 Estoque: {{$produto[0]->quantidade}} unidades
                             </label>
                         </div>
-                    
-            
-    
+
+
+
                         @livewire('botao-carrinho-produto', ['produto' => $produto[0]->id])
-            
-    
+
+
                 <form action="/comprar" method="get">
-                    <button class="btn-buy btn btn-outline-success w-100 mt-4" name="produto" value="{{$produto[0]->id}}" type="submit" onclick="onClickBuyBtn(this, event)">
+                    <button class="btn-buy btn btn-outline-success w-100 mt-4" name="produto" value="{{$produto[0]->id}}" type="submit">
                         Comprar
                     </button>
                 </form>
-                
+
     </div>
             <div id="product-accordion" class="accordion mb-5">
-        
-            
+
+
                 <div class="accordion-item">
                     <h3 id="product-blocks-heading-58913963-afac-40f1-aaef-9a8b2084dc99" class="accordion-header mb-0">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#product-blocks-collapse-58913963-afac-40f1-aaef-9a8b2084dc99" aria-expanded="false" aria-controls="product-blocks-collapse-58913963-afac-40f1-aaef-9a8b2084dc99">
@@ -78,19 +78,19 @@
                     </h3>
                     <div id="product-blocks-collapse-58913963-afac-40f1-aaef-9a8b2084dc99" class="accordion-collapse collapse" aria-labelledby="product-blocks-heading-58913963-afac-40f1-aaef-9a8b2084dc99" style="">
                         <div class="accordion-body">
-                            
+
                                 <div class="product-description rte">
                                     <p>
                                         {{$produto[0]->descricao}}
                                     </p>
                                 </div>
-                            
+
                         </div>
                     </div>
                 </div>
-            
-        
-            
+
+
+
                 <div class="accordion-item">
                     <h3 id="product-blocks-heading-9bcd0fdf-578a-47f6-bc90-d14ef3dbeaa5" class="accordion-header mb-0">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#product-blocks-collapse-9bcd0fdf-578a-47f6-bc90-d14ef3dbeaa5" aria-expanded="true" aria-controls="product-blocks-collapse-9bcd0fdf-578a-47f6-bc90-d14ef3dbeaa5">
@@ -99,23 +99,23 @@
                     </h3>
                     <div id="product-blocks-collapse-9bcd0fdf-578a-47f6-bc90-d14ef3dbeaa5" class="accordion-collapse collapse " aria-labelledby="product-blocks-heading-9bcd0fdf-578a-47f6-bc90-d14ef3dbeaa5">
                         <div class="accordion-body">
-                            
+
                                 <div class="description rte">
-                                    <p>Não realizamos retorno do valor após produto aberto ou passado mais de 1 dia da compra. 
+                                    <p>Não realizamos retorno do valor após produto aberto ou passado mais de 1 dia da compra.
                                         Confira no momento da entrega se o produto condiz com o que foi pedido, caso não esteja correto, não abra o produto, apenas entre em contato para que seja feito o retorno.</p>
                                 </div>
-                            
+
                         </div>
                     </div>
                 </div>
-            
-        
+
+
     </div>
-    
-                        
+
+
                             <div class="text-end">
-                                
-    
+
+
     <button class="btn-share btn btn-outline-primary btn-sm d-inline-flex align-items-center" type="button" data-text-share="Share" data-text-copy="Copy" data-text-copied="Copied!" data-share-title="
         Bag Series 1
      – KS BootShop" onclick="onLinkShare(this, event)">
@@ -125,7 +125,7 @@
         Compartilhar
     </button>
                             </div>
-                        
+
                     </div>
                 </div>
             </div>

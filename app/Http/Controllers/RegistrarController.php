@@ -12,6 +12,8 @@ use App\Models\ItensVenda;
 use App\Models\Notificacao;
 use App\Http\Livewire\Notificacoes;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\RegisterEmail;
 
 
 
@@ -28,7 +30,7 @@ class RegistrarController extends Controller
         } else{
             return redirect('/home');
         }
-        
+
     }
 
     public function store_prod(Request $request){
@@ -40,7 +42,7 @@ class RegistrarController extends Controller
                     $request->session()->flash('erro', "Todos os campos devem ser preenchidos!");
                     return redirect('registrarProdutos');
                 }
-                
+
             }
             //validação de nome
             $nome = Produto::query()->withTrashed()->where('nome', '=', $request->nome)->get();
@@ -73,12 +75,12 @@ class RegistrarController extends Controller
     }
 
     public function reg_marcas(){
-        if(Auth::check()){            
+        if(Auth::check()){
             return view('registros.marcasFarmacia');
         } else{
             return redirect('/home');
         }
-        
+
     }
 
     public function store_marcas(Request $request){
@@ -97,12 +99,12 @@ class RegistrarController extends Controller
     }
 
     public function reg_categorias(){
-        if(Auth::check()){            
+        if(Auth::check()){
             return view('registros.categoriasFarmacia');
         } else{
             return redirect('/home');
         }
-        
+
     }
 
     public function store_categorias(Request $request){
@@ -121,15 +123,15 @@ class RegistrarController extends Controller
     }
 
     public function reg_administradores(){
-        if(Auth::check()){            
+        if(Auth::check()){
             $usuarios = User::query()->orderBy('id')->paginate(10);
-            
+
             return view('registros.administradores', compact('usuarios'));
 
         } else{
             return redirect('/home');
         }
-        
+
     }
 
     public function store_administradores(Request $request){
@@ -146,7 +148,7 @@ class RegistrarController extends Controller
     }
 
     public function reg_estoque(Request $request){
-        if(Auth::check()){    
+        if(Auth::check()){
             $produto = Produto::find($request->id);
             return view('registros.estoque', compact('produto'));
         } else{
@@ -162,7 +164,7 @@ class RegistrarController extends Controller
                     $request->session()->flash('erro', "Todos os campos devem ser preenchidos!");
                     return redirect('/registrarEstoque/{{$request->id}}');
                 }
-                
+
             }
             $dados["produto"] = $request->id;
             //dd($dados);
@@ -176,7 +178,7 @@ class RegistrarController extends Controller
     }
 
     public function reg_compra(Request $request){
-        if(Auth::check()){  
+        if(Auth::check()){
             $pagamento = $request->all();
 
             $endereco = $request->session()->get('compra');
@@ -191,7 +193,7 @@ class RegistrarController extends Controller
             }
 
             $venda->modoRecebimento = $dados['flexRadioDefault'];
-            
+
             $venda->nomeRecebedor = $dados['nomeRecebedor'];
             $venda->CEP = $dados['cep'];
             $venda->cidade = $dados['cidade'];
@@ -199,7 +201,11 @@ class RegistrarController extends Controller
             $venda->logradouro = $dados['logradouro'];
             $venda->bairro = $dados['bairro'];
             $venda->numero = $dados['numero'];
-            $venda->statusEntrega = "Em preparação.";
+            if($venda->modoRecebimento == "Pix"){
+                $venda->statusEntrega = "Aguardando pix.";
+            } else {
+                $venda->statusEntrega = "Em preparação.";
+            }
             $venda->parcelas = 1;
             //verificar saldo total da compra
 
@@ -221,7 +227,7 @@ class RegistrarController extends Controller
             $data = date('Y-m-d');
             $venda->vencimento = $data;
 
-            $venda->save();
+
 
             //Adicionando produtos do carrinho na venda
             foreach (session('cart') as $id => $item) {
@@ -229,6 +235,8 @@ class RegistrarController extends Controller
                 if(!is_null($produto)){
                 $produtoQtd = $produto->getEstoques[0]->quantidade;
                     if($produtoQtd >= $item['quantidade']){
+                        //Após verificação de quantidade, salva a venda
+                        $venda->save();
                         //Criando registro na tabela ItensVendas
                         $produtoVenda = ['produto' => $produto->id, 'quantidade' => $item['quantidade'], 'valorUnitario' => $produto->precoVendaAtual, 'venda' => $venda->id];
                         $itensVenda = ItensVenda::create($produtoVenda);
@@ -244,6 +252,7 @@ class RegistrarController extends Controller
                         $notif->venda = $venda->id;
                         $notif->save();
                         */
+
                         if($quantidade == 0){
                             //o get pode trazer mais de 1 objeto, o first traria valor único
                             //também poderia usar o delete na frente da collection
@@ -255,20 +264,58 @@ class RegistrarController extends Controller
                         $request->session()->flash('erro', "O produto {$produto->nome} está com uma quantidade em estoque menor do que informado, fazendo a compra não ser finalizada. Por favor ajuste a quantidade. Quantidade restante: {$produto->getEstoques[0]->quantidade}.");
                         return redirect()->route('listarCarrinho');
                     }
-                    
+
+
                 } else {
                     $request->session()->flash('erro', "O produto informado (id {$item['id']}) está incorreto, verifique novamente e/ou contate o administrador!");
                     return redirect()->route('listarCarrinho');
                 }
-                
+
 
             }
+
+            //envio de email
+            $usuario = User::find($user);
+            $this->sendMail($venda);
 
 
             return view('listar.fecharPedido', compact('venda'));
         } else{
             return redirect('/home');
         }
+    }
+
+    public function sendMail(Venda $venda){
+        $usuario = $venda->getUser;
+        $nome = explode(' ', $usuario->name);
+        $tempo = now()->addSecond(2);
+
+        if($venda->statusEntrega == "Em preparação."){
+            $mail = new RegisterEmail([
+                'nome' => $nome[0],
+                'mensagem' => "Informamos que seu pedido número {$venda->id} está em preparação, aguarde até ser notificado novamente."
+            ]);
+            //Mail::to($usuario->email)->send($mail);
+            //Mail::to($usuario->email)->queue($mail);
+            Mail::to($usuario->email)->later($tempo, $mail);
+
+
+        } else {
+            //Status aguardando pix
+            $mail = new RegisterEmail([
+                'nome' => $nome[0],
+                'mensagem' => "Seu pedido número {$venda->id} será separado para entrega após pagamento mediante comprovação.."
+            ]);
+            //Mail::to($usuario->email)->send($mail);
+            //mudança para ir na fila de envio
+            Mail::to($usuario->email)->later($tempo, $mail);
+
+        }
+
+
+        //use o return para visualizar o email antes de ser enviado
+
+        //Mail::to('mateusdias2001@gmail.com')->send($mail);
     }
 
 }

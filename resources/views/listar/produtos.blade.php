@@ -9,7 +9,7 @@
 
 
     <h2 style="margin-left: 0%;" class="text-center mb-3">Produtos</h2>
-    
+
 <div class="container">
     <div class="row gx-3">
         <div class="col-12">
@@ -17,7 +17,7 @@
                 @csrf
                 <div class="col-12 col-md-6 mb-3">
                     <div class="form-floating">
-                        
+
                         <select class="form-select" name="periodo">
                             <option value="30" {{$filtros['periodo'] == 30 ? 'selected' : ''}}>Últimos 30 dias</option>
                             <option value="60" {{$filtros['periodo']  == 60 ? 'selected' : ''}}>Últimos 60 dias</option>
@@ -34,6 +34,7 @@
                         <select class="form-select" name="ordenacao">
                             <option value="1" {{$filtros['ordenacao']  == 1 ? 'selected' : ''}}>Mais novos primeiro</option>
                             <option value="2" {{$filtros['ordenacao'] == 2 ? 'selected' : ''}}>Mais antigos primeiro</option>
+                            <option value="3" {{$filtros['ordenacao'] == 3 ? 'selected' : ''}}>Menor quantidade primeiro</option>
                         </select>
                         <label>Ordenação</label>
                     </div>
@@ -43,6 +44,7 @@
                         <select class="form-select" name="classificacao">
                             <option value="1" {{1  == 1 ? 'selected' : ''}}>Ativo</option>
                             <option value="2" {{1 == 2 ? 'selected' : ''}}>Inativos</option>
+                            <option value="3" {{1 == 2 ? 'selected' : ''}}>Independente</option>
                         </select>
                         <label>Classificação</label>
                     </div>
@@ -117,26 +119,32 @@
                                     </th>
                                 </form>
                             @else
+                                <th>
                                 <form action="/listarEstoque/{{ $item->id }}" method="GET">
                                     @csrf
-                                    <th>
-                                    <button class="btn btn-warning btn-sm"> <i class="fa-solid fa-pen-to-square"></i>Listar</button>
-                                    </th>
+                                    <button class="btn btn-warning btn-sm mb-2"> <i class="fas fa-list fa-lg"></i></button>
                                 </form>
+                                    <form action="/registrarProdutos" method="get">
+                                        @csrf
+                                        <button class="btn btn-success">
+                                            <i class="fa-solid fa-plus fa-xs"></i>
+                                        </button>
+                                    </form>
+                                </th>
                             @endif
                             <th>
-                            <form action="/editarProduto/{{ $item->id }}" method="POST">
-                                @csrf
-                                <button class="btn btn-warning btn-sm mb-2"> <i class="fa-solid fa-pen-to-square"></i> Editar</button>
-                            </form>
-                            <form  class="deleteAlert" action="/removerProduto/{{ $item->id }}" method="POST">
-                                @csrf
-                                <button type="submit" class="btn btn-danger btn-sm"> <i class="fas fa-trash"></i> Desativar</button>    
-                            </form>
+                                    <form action="/editarProduto/{{ $item->id }}" method="POST">
+                                        @csrf
+                                        <button class="btn btn-warning btn-sm mb-2"> <i class="fa-solid fa-pen-to-square"></i></button>
+                                    </form>
+                                    <form  class="deleteAlert" action="/removerProduto/{{ $item->id }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="btn btn-danger btn-sm"> <i class="fas fa-times fa-lg"></i></button>
+                                    </form>
                             </th>
                     </tr>
                 @endforeach
-                
+
             </tbody>
         </thead>
     </table>
@@ -153,7 +161,7 @@
             </div>
         </div>
     @endif
-    
+
 </div>
 @endsection
 @push('scripts')
@@ -172,7 +180,7 @@
       if (willDelete) {
         this.submit()
       }
-    }); 
+    });
   })
 </script>
 @endpush

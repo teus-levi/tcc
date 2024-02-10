@@ -10,8 +10,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
     <script src="https://kit.fontawesome.com/80f45105ae.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    
-    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css" integrity="sha512-gOQQLjHRpD3/SEOtalVq50iDn4opLVup2TF8c4QPI3/NmUPNZOk2FG0ihi8oCU/qYEsw4P6nuEZT2lAG0UNYaw==" crossorigin="anonymous" referrerpolicy="no-referrer" /> -->   
+
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css" integrity="sha512-gOQQLjHRpD3/SEOtalVq50iDn4opLVup2TF8c4QPI3/NmUPNZOk2FG0ihi8oCU/qYEsw4P6nuEZT2lAG0UNYaw==" crossorigin="anonymous" referrerpolicy="no-referrer" /> -->
     <link rel="stylesheet" href="{{ asset ('css/home.css') }}">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
@@ -52,6 +52,24 @@
                     <li><a class="dropdown-item" href="{{ route('registrarAdministradores')}}">Administradores</a></li>
                   </ul>
                 </li>
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Relatórios
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li>
+                            estoque
+                        </li>
+                        <li>
+                            estoque
+
+                        </li>
+                        <li>
+                            estoque
+
+                        </li>
+                    </ul>
+                </li>
               @endcan
               @auth
                 <li class="nav-item">
@@ -69,18 +87,14 @@
             @livewire('carrinho')
             <!-- -->
             <!-- carrinho-->
-            
+
             <!-- livewire('notificacoes') -->
             <!-- -->
-            <form class="d-flex">
-              <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-              <button class="btn btn-outline-dark" type="submit">Search</button>
-            </form>
           </div>
         </div>
       </nav>
 
-    
+
 
     </div>
 
@@ -123,4 +137,5 @@ $( '.single-select-field' ).select2( {
 @stack('dropify_script')
 @stack('scripts')
 @stack('formatar_script')
+@stack('validacao')
   </html>

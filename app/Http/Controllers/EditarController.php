@@ -16,6 +16,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\RegisterEmail;
+use App\Rules\CPF;
+use Illuminate\Support\Facades\Validator;
 
 class EditarController extends Controller
 {
@@ -25,11 +29,11 @@ class EditarController extends Controller
                             ->join('categorias', 'categorias.id', '=', 'produtos.categoria')
                             ->join('marcas', 'marcas.id', '=', 'produtos.marca')
                             ->where('produtos.id', '=', $request->id)
-                            ->select('produtos.*', 
+                            ->select('produtos.*',
                                     'categorias.nome as n_categoria', 'categorias.id as id_categoria',
                                     'marcas.nome as n_marca', 'marcas.id as id_marca')
                             ->get();
-                                    
+
             $marcas = Marca::query()->orderBy('id')->get();
             $categorias = Categoria::query()->orderBy('id')->get();
             //$produto = Produto::find($request->id);
@@ -117,10 +121,10 @@ class EditarController extends Controller
         if(Auth::check()){
             //$estoque = Estoque::find($request->id);
             $estoque = DB::table('estoques')
-                    ->join('produtos', 'estoques.produto', '=', 'produtos.id')    
+                    ->join('produtos', 'estoques.produto', '=', 'produtos.id')
                     ->where('estoques.id', '=', $request->id)
                     ->select('estoques.*', 'produtos.nome as n_produto')
-                    ->get();                                
+                    ->get();
             return view('editar.estoque', compact('estoque'));
         } else{
             return redirect('/home');
@@ -146,7 +150,7 @@ class EditarController extends Controller
                     'lote' => $request->lote,
                     'validade' => $request->validade,
                 ]);
-                
+
                 $request->session()->flash('mensagem', "Estoque editado com sucesso!");
                 return redirect()->route('listarEstoque', [$estoque->produto]);
 
@@ -263,6 +267,21 @@ class EditarController extends Controller
             $cep = preg_replace("/[^0-9]/", "", $request->cep);
             $resposta = Http::get('https://viacep.com.br/ws/'.$cep.'/json/');
             $dadosApi = $resposta->json();
+
+            /*$validator = Validator::make($dadosApi, [
+                'nome' => 'required|min:6|max:100',
+                'CPF' => ['required', new CPF],
+                'telefone' => 'required|numeric|min_digits:10|max_digits:11',
+                'dataNascimento' => 'required|after:01/01/1920|before:01/01/2010',
+            ]
+            );
+            //dd($validator->errors()->all());
+
+                if($validator->fails()){
+                    return redirect('/endereco')
+                    ->withErrors($validator);
+                }
+*/
             if(!empty($dadosApi['erro'])){
                 $request->session()->flash('erro', "O CEP está incorreto, por isso o endereço informado não foi salvo. Tente novamente.");
             } elseif(!empty($dadosApi['logradouro'])){
@@ -291,7 +310,7 @@ class EditarController extends Controller
                     ]);
                     $request->session()->flash('mensagem', "Endereço editado com sucesso!");
                 }
-                
+
             }
             return redirect('/endereco');
         } else {
@@ -323,7 +342,7 @@ class EditarController extends Controller
                 $request->session()->flash('erro', "As senhas estão diferentes, informe novamente.");
                 return redirect('/senha');
             }
-            
+
         } else {
             return redirect()->route('login');
         }
@@ -348,10 +367,27 @@ class EditarController extends Controller
         if(Auth::check() && $id == $request->id){
             //formatando informações
             //dd($request->all());
+            $dados = $request->all();
             $cpf = array(".", "-");
-            $request->CPF = str_replace($cpf, "", $request->CPF);
+            $dados['CPF'] = str_replace($cpf, "", $request->CPF);
             $telefone = array("(", ")", "-", " ");
-            $request->telefone = str_replace($telefone, "", $request->telefone);
+            $dados['telefone'] = str_replace($telefone, "", $request->telefone);
+
+
+            $validator = Validator::make($dados, [
+                'nome' => 'required|min:6|max:100',
+                'CPF' => ['required', new CPF],
+                'telefone' => 'required|numeric|min_digits:10|max_digits:11',
+                'dataNascimento' => 'required|after:01/01/1920|before:01/01/2010',
+            ]
+            );
+            //dd($validator->errors()->all());
+
+                if($validator->fails()){
+                    return redirect('/perfil')
+                    ->withErrors($validator);
+                }
+
             //update no banco
             Cliente::where('usuario', $request->id)->update([
                 'CPF' => $request->CPF,
@@ -392,6 +428,8 @@ class EditarController extends Controller
                     'vencimento' => $request->vencimento,
                     'statusEntrega' => $request->status
                 ]);
+                $venda = Venda::find($request->id);
+                $this->sendMail($venda);
 
                 $request->session()->flash('mensagem', "Informações atualizadas com sucesso!");
                 return redirect()->route('editarVenda', [$request->id]);
@@ -399,7 +437,7 @@ class EditarController extends Controller
                 $request->session()->flash('erro', "Verifique novamente as informações!");
                 return redirect()->route('editarVenda', [$request->id]);
             }
-            
+
 
     }
     //usuário cancelando o pedido que fez
@@ -441,7 +479,7 @@ class EditarController extends Controller
                         'quantidade' => $qtdTotal
                     ]);
                 }
-                
+
                 $request->session()->flash('mensagem', "Pedido cancelado com sucesso!");
                 return redirect()->route('listarDetalhesPedido', [$request->id]);
             }
@@ -461,9 +499,13 @@ class EditarController extends Controller
             $motivo = $request->motivo;
 
             $venda->descDelete = $motivo;
+            $usuario = $venda->getUser;
             $venda->statusEntrega = "Cancelado.";
             $venda->save();
+
             $venda->delete();
+
+            $this->sendMail($venda);
 
             $request->session()->flash('mensagem', "Venda cancelada com sucesso!");
             return redirect()->route('listarVendas');
@@ -471,6 +513,52 @@ class EditarController extends Controller
             $request->session()->flash('erro', "Algo deu errado, tente novamente!");
             return redirect()->route('listarVendas');
         }
+    }
+
+    public function sendMail(Venda $venda){
+        $usuario = $venda->getUser;
+        $nome = explode(' ', $usuario->name);
+        $tempo = now()->addSecond(2);
+
+        if($venda->statusEntrega == "Cancelado."){
+            $mail = new RegisterEmail([
+                'nome' => $nome[0],
+                'mensagem' => "Informamos que seu pedido número {$venda->id} foi cancelado.
+                <br>Motivo: $venda->descDelete"
+            ]);
+            Mail::to($usuario->email)->later($tempo, $mail);
+
+        } else if($venda->statusEntrega == "Em preparação."){
+            $mail = new RegisterEmail([
+                'nome' => $nome[0],
+                'mensagem' => "Seu pedido número {$venda->id} está em preparação, aguarde até ser notificado novamente."
+            ]);
+            Mail::to($usuario->email)->later($tempo, $mail);
+        } else if($venda->statusEntrega == "Aguardando pix."){
+            $mail = new RegisterEmail([
+                'nome' => $nome[0],
+                'mensagem' => "Seu pedido número {$venda->id} será separado para entrega após pagamento mediante comprovação."
+            ]);
+            Mail::to($usuario->email)->later($tempo, $mail);
+        } else if($venda->statusEntrega == "Em transporte."){
+            $mail = new RegisterEmail([
+                'nome' => $nome[0],
+                'mensagem' => "Seu pedido número {$venda->id} está em transporte, aguarde a entrega ser finalizada."
+            ]);
+            Mail::to($usuario->email)->later($tempo, $mail);
+        } else {
+            //entregue
+            $mail = new RegisterEmail([
+                'nome' => $nome[0],
+                'mensagem' => "Seu pedido número {$venda->id} foi entregue! Agradecemos a preferência."
+            ]);
+            Mail::to($usuario->email)->later($tempo, $mail);
+        }
+
+
+        //use o return para visualizar o email antes de ser enviado
+
+        //Mail::to('mateusdias2001@gmail.com')->send($mail);
     }
 
 }

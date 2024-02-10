@@ -19,7 +19,7 @@ class ListarController extends Controller
     public function __construct(){
         $this->middleware('auth');
     }*/
-    
+
     public function list_prod(){
         if(Auth::check()){
             //Se tem ou não o estoque do produto
@@ -29,7 +29,7 @@ class ListarController extends Controller
                             ->get();
             */
             /*
-            $estoque = DB::select('select produtos.* from produtos 
+            $estoque = DB::select('select produtos.* from produtos
                                     where produtos.id = estoques.produto');
 
             $produtos = Produto::query()->orderBy('id')->get();
@@ -38,20 +38,22 @@ class ListarController extends Controller
             */
 
             /*
-            $produtos = DB::select('select produtos.*, estoques.produto, estoques.quantidade from produtos 
+            $produtos = DB::select('select produtos.*, estoques.produto, estoques.quantidade from produtos
                                     left join estoques
                                     on produtos.id = estoques.produto')->paginate(10);
                                     */
-            
+
             $produtos = DB::table('produtos')
                             ->leftJoin('estoques', 'produtos.id', '=', 'estoques.produto')
                             ->join('categorias', 'categorias.id', '=', 'produtos.categoria')
                             ->join('marcas', 'marcas.id', '=', 'produtos.marca')
                             ->whereNull('produtos.deleted_at')
-                            ->select('produtos.*', DB::raw('SUM(estoques.quantidade) as quantidade'), 
+                            ->select('produtos.*', DB::raw('SUM(estoques.quantidade) as quantidade'),
                             'categorias.nome as n_categoria', 'marcas.nome as n_marca')
                             ->groupBy('produtos.id')
-                            ->orderBy('quantidade', 'asc')->paginate(10);
+                            ->orderBy('quantidade', 'asc')
+                            ->orderBy('produtos.nome', 'asc')
+                            ->paginate(10);
             //dd($produtos);
 
             $filtros = ['periodo' => 9999, 'ordenacao' => 1];
@@ -77,7 +79,7 @@ class ListarController extends Controller
             }
             return redirect('/');
         }
-        
+
 
     }
 
@@ -219,8 +221,7 @@ class ListarController extends Controller
         $cart = session()->get('cart', []);
         if(isset($cart[$request->produto])){
             $cart[$request->produto]['quantidade']++;
-            $total += $produto->precoVendaAtual;
-            
+
         } else {
             $cart[$request->produto] = [
                 "id" => $produto->id,
@@ -250,7 +251,7 @@ class ListarController extends Controller
                         ->groupBy('vendas.id')
                         ->orderBy('vendas.created_at', 'desc')
                         ->paginate(5);
-                        
+
         $itensPedidos = DB::table('vendas')
                         ->join('itens_vendas', 'vendas.id', '=', 'itens_vendas.venda')
                         ->join('produtos', 'produtos.id', '=', 'itens_vendas.produto')
@@ -282,7 +283,7 @@ class ListarController extends Controller
     public function list_pagamento(Request $request){
         $itens = $request->except('_token');
         $request->session()->put('compra', $itens);
-        
+
         return view('listar.formaPagamento');
     }
 
@@ -296,7 +297,7 @@ class ListarController extends Controller
         if($ordenacao == 2){
             $filtro = "asc";
         }
-        
+
         if($periodo == 9999){
             $pedidos = DB::table('vendas')
                         ->join('itens_vendas', 'vendas.id', '=', 'itens_vendas.venda')
@@ -307,7 +308,7 @@ class ListarController extends Controller
                         ->groupBy('vendas.id')
                         ->orderBy('vendas.created_at', $filtro)
                         ->paginate(5);
-                        
+
             $itensPedidos = DB::table('vendas')
                             ->join('itens_vendas', 'vendas.id', '=', 'itens_vendas.venda')
                             ->join('produtos', 'produtos.id', '=', 'itens_vendas.produto')
@@ -319,7 +320,7 @@ class ListarController extends Controller
                             ->get();
 
         return view('listar.pedidos', compact('pedidos', 'itensPedidos', 'filtros'));
-        
+
         } else {
             date_default_timezone_set('America/Sao_Paulo');
             $dataAtual = date('Y-m-d H:i:s');
@@ -336,7 +337,7 @@ class ListarController extends Controller
                             ->groupBy('vendas.id')
                             ->orderBy('vendas.created_at', $filtro)
                             ->paginate(5);
-                            
+
             $itensPedidos = DB::table('vendas')
                             ->join('itens_vendas', 'vendas.id', '=', 'itens_vendas.venda')
                             ->join('produtos', 'produtos.id', '=', 'itens_vendas.produto')
@@ -346,7 +347,7 @@ class ListarController extends Controller
                             ->select('itens_vendas.*', 'produtos.id', 'produtos.nome')
                             ->orderBy('itens_vendas.venda')
                             ->get();
-            
+
             return view('listar.pedidos', compact('pedidos', 'itensPedidos', 'filtros'));
         }
     }
@@ -448,7 +449,7 @@ class ListarController extends Controller
             ->orderBy('id', $ordenacao)->paginate(10);
             return view('listar.vendas', compact('vendas', 'filtros', 'pesquisa'));
         }
-        
+
     }
 
     public function list_filt_prod(Request $request){
@@ -480,7 +481,7 @@ class ListarController extends Controller
             ->whereNull('produtos.deleted_at')
             ->where('produtos.created_at', '>=', $dataLimite)
             ->where('produtos.nome', 'like', '%'. $pesquisa . '%')
-            ->select('produtos.*', DB::raw('SUM(estoques.quantidade) as quantidade'), 
+            ->select('produtos.*', DB::raw('SUM(estoques.quantidade) as quantidade'),
             'categorias.nome as n_categoria', 'marcas.nome as n_marca')
             ->groupBy('produtos.id')
             ->orderBy('produtos.nome', $ordenacao)->paginate(10);
@@ -493,7 +494,7 @@ class ListarController extends Controller
             ->join('marcas', 'marcas.id', '=', 'produtos.marca')
             ->whereNull('produtos.deleted_at')
             ->where('produtos.created_at', '>=', $dataLimite)
-            ->select('produtos.*', DB::raw('SUM(estoques.quantidade) as quantidade'), 
+            ->select('produtos.*', DB::raw('SUM(estoques.quantidade) as quantidade'),
             'categorias.nome as n_categoria', 'marcas.nome as n_marca')
             ->groupBy('produtos.id')
             ->orderBy('produtos.nome', $ordenacao)->paginate(10);
@@ -501,7 +502,7 @@ class ListarController extends Controller
             return view('listar.produtos', compact('produtos', 'filtros'));
         }
 
-            
+
     }
 
     public function list_fechar_pedido(Request $request){
