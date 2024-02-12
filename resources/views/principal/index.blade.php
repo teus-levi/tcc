@@ -181,9 +181,9 @@
         </div>
 
         <hr mt-3>
-        
+
         <div class="row g-3">
-            
+
             <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
                 <div class="card text-center bg-light">
                     <a href="#" class="position-absolute end-0 p-2 text-danger">
@@ -237,7 +237,7 @@
                     </div>
                 endforeach
         </div>
-        
+
         <div class="row pt-5">
             {produtos->links()}}
         </div>
@@ -249,8 +249,8 @@
         <div class="container px-4 px-lg-5 mt-5">
             <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
                 @foreach ($produtos as $produto)
-                    
-                
+
+
                 <div class="col mb-5">
                     <div class="card h-100">
                         <!-- Product image-->
@@ -264,8 +264,8 @@
                                 <h5 class="fw-bolder">{{$produto->nome}}</h5>
                                 <!-- Product price-->
                                 R$
-                                <span class="precoVendaAtual">
-                                    {{$produto->precoVendaAtual}}
+                                <span >
+                                    {{number_format($produto->precoVendaAtual / 100,2,",",".")}}
                                 </span>
                             </div>
                         </div>
@@ -302,6 +302,6 @@
 @push('formatar_script')
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js" integrity="sha512-pHVGpX7F/27yZ0ISY+VVjyULApbDlD0/X0rgGbTqCE7WFW5MezNTWG/dnhtbBuICzsd0WQPgpE4REBLv+UqChw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script>
-      $('.precoVendaAtual').mask("#.##0,00", {reverse: true});
+      $('.preco').mask("#.##0,00", {reverse: true});
   </script>
 @endpush

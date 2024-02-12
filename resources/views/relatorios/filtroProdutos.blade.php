@@ -5,7 +5,7 @@
 @endsection
 
 @section('conteudo')
-<h2 style="margin-left: 0%;" class="text-center mb-3">Relatório de Produtos Vencidos</h2>
+<h2 style="margin-left: 0%;" class="text-center mb-3">Relatório de Vendas</h2>
 
 <div class="container">
     <div class="row gx-3">

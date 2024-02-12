@@ -56,7 +56,7 @@ class ListarController extends Controller
                             ->paginate(10);
             //dd($produtos);
 
-            $filtros = ['periodo' => 9999, 'ordenacao' => 1];
+            $filtros = ['periodo' => 9999, 'ordenacao' => 1, 'classificacao' => 1];
 
             return view('listar.produtos', compact('produtos', 'filtros'));
         } else{
@@ -66,10 +66,9 @@ class ListarController extends Controller
 
     public function list_estoque(Request $request){
         //$estoque = Estoque::query()->orderBy('id')->get();
+
         $est = DB::table('estoques')
         ->join('produtos', 'produtos.id', '=', 'estoques.produto')
-        ->whereNull('estoques.deleted_at')
-        ->whereNull('produtos.deleted_at')
         ->where('estoques.produto', '=', $request->id)
         ->select('estoques.*', 'produtos.nome as n_produto')
         ->orderBy('estoques.id', 'desc')->paginate(10);
@@ -457,6 +456,7 @@ class ListarController extends Controller
         $periodo = $request->periodo;
         $filtros = $request->except('_token');
         $pesquisa = $request->pesquisa;
+        $classificacao = $request->classificacao;
 
         date_default_timezone_set('America/Sao_Paulo');
         $dataAtual = date('Y-m-d H:i:s');
@@ -473,7 +473,16 @@ class ListarController extends Controller
             $dataLimite = 0;
         }
 
-        if(isset($pesquisa)){
+        /*if($classificacao == 1){
+            $classificacao = '->whereNull('deleted_at');';
+        } else if($classificacao == 2){
+            $classificacao = '->whereNotNull('deleted_at');';
+        } else {
+            $classificacao = '->withTrashed();';
+        }*/
+
+
+        if(isset($pesquisa) && $classificacao == 1){
             $produtos = DB::table('produtos')
             ->leftJoin('estoques', 'produtos.id', '=', 'estoques.produto')
             ->join('categorias', 'categorias.id', '=', 'produtos.categoria')
@@ -487,7 +496,36 @@ class ListarController extends Controller
             ->orderBy('produtos.nome', $ordenacao)->paginate(10);
 
             return view('listar.produtos', compact('produtos', 'filtros'));
-        } else {
+        } else if(isset($pesquisa) && $classificacao == 2){
+            $produtos = DB::table('produtos')
+            ->leftJoin('estoques', 'produtos.id', '=', 'estoques.produto')
+            ->join('categorias', 'categorias.id', '=', 'produtos.categoria')
+            ->join('marcas', 'marcas.id', '=', 'produtos.marca')
+            ->whereNotNull('produtos.deleted_at')
+            ->where('produtos.created_at', '>=', $dataLimite)
+            ->where('produtos.nome', 'like', '%'. $pesquisa . '%')
+            ->select('produtos.*', DB::raw('SUM(estoques.quantidade) as quantidade'),
+            'categorias.nome as n_categoria', 'marcas.nome as n_marca')
+            ->groupBy('produtos.id')
+            ->orderBy('produtos.nome', $ordenacao)->paginate(10);
+
+            return view('listar.produtos', compact('produtos', 'filtros'));
+
+        }else if(isset($pesquisa) && $classificacao == 3){
+            $produtos = DB::table('produtos')
+            ->leftJoin('estoques', 'produtos.id', '=', 'estoques.produto')
+            ->join('categorias', 'categorias.id', '=', 'produtos.categoria')
+            ->join('marcas', 'marcas.id', '=', 'produtos.marca')
+            ->where('produtos.created_at', '>=', $dataLimite)
+            ->where('produtos.nome', 'like', '%'. $pesquisa . '%')
+            ->select('produtos.*', DB::raw('SUM(estoques.quantidade) as quantidade'),
+            'categorias.nome as n_categoria', 'marcas.nome as n_marca')
+            ->groupBy('produtos.id')
+            ->orderBy('produtos.nome', $ordenacao)->paginate(10);
+
+            return view('listar.produtos', compact('produtos', 'filtros'));
+
+        } else if($classificacao == 1){
             $produtos = DB::table('produtos')
             ->leftJoin('estoques', 'produtos.id', '=', 'estoques.produto')
             ->join('categorias', 'categorias.id', '=', 'produtos.categoria')
@@ -500,6 +538,33 @@ class ListarController extends Controller
             ->orderBy('produtos.nome', $ordenacao)->paginate(10);
 
             return view('listar.produtos', compact('produtos', 'filtros'));
+        } else if($classificacao == 2){
+            $produtos = DB::table('produtos')
+            ->leftJoin('estoques', 'produtos.id', '=', 'estoques.produto')
+            ->join('categorias', 'categorias.id', '=', 'produtos.categoria')
+            ->join('marcas', 'marcas.id', '=', 'produtos.marca')
+            ->whereNotNull('produtos.deleted_at')
+            ->where('produtos.created_at', '>=', $dataLimite)
+            ->select('produtos.*', DB::raw('SUM(estoques.quantidade) as quantidade'),
+            'categorias.nome as n_categoria', 'marcas.nome as n_marca')
+            ->groupBy('produtos.id')
+            ->orderBy('produtos.nome', $ordenacao)->paginate(10);
+
+            return view('listar.produtos', compact('produtos', 'filtros'));
+
+        } else {
+            $produtos = DB::table('produtos')
+            ->leftJoin('estoques', 'produtos.id', '=', 'estoques.produto')
+            ->join('categorias', 'categorias.id', '=', 'produtos.categoria')
+            ->join('marcas', 'marcas.id', '=', 'produtos.marca')
+            ->where('produtos.created_at', '>=', $dataLimite)
+            ->select('produtos.*', DB::raw('SUM(estoques.quantidade) as quantidade'),
+            'categorias.nome as n_categoria', 'marcas.nome as n_marca')
+            ->groupBy('produtos.id')
+            ->orderBy('produtos.nome', $ordenacao)->paginate(10);
+
+            return view('listar.produtos', compact('produtos', 'filtros'));
+
         }
 
 

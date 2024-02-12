@@ -42,9 +42,9 @@
                 <div class="col-12 col-md-6">
                     <div class="form-floating">
                         <select class="form-select" name="classificacao">
-                            <option value="1" {{1  == 1 ? 'selected' : ''}}>Ativo</option>
-                            <option value="2" {{1 == 2 ? 'selected' : ''}}>Inativos</option>
-                            <option value="3" {{1 == 2 ? 'selected' : ''}}>Independente</option>
+                            <option value="1" {{$filtros['classificacao']  == 1 ? 'selected' : ''}}>Ativo</option>
+                            <option value="2" {{$filtros['classificacao'] == 2 ? 'selected' : ''}}>Inativos</option>
+                            <option value="3" {{$filtros['classificacao'] == 3 ? 'selected' : ''}}>Independente</option>
                         </select>
                         <label>Classificação</label>
                     </div>
@@ -122,14 +122,17 @@
                                     @csrf
                                     <button class="btn btn-warning mb-2"> <i class="fas fa-list fa-xs"></i></button>
                                 </form>
+                                @if(is_null($item->deleted_at))
                                     <form action="/registrarEstoque/{{ $item->id }}" method="post">
                                         @csrf
                                         <button class="btn btn-success">
                                             <i class="fa-solid fa-plus fa-xs"></i>
                                         </button>
                                     </form>
+                                @endif
                                 </th>
                             @endif
+                            @if(is_null($item->deleted_at))
                             <th>
                                     <form action="/editarProduto/{{ $item->id }}" method="POST">
                                         @csrf
@@ -137,9 +140,17 @@
                                     </form>
                                     <form  class="deleteAlert" action="/removerProduto/{{ $item->id }}" method="POST">
                                         @csrf
-                                        <button type="submit" class="btn btn-danger"> <i class="fas fa-times fa-xs"></i></button>
+                                        <button type="submit" class="btn btn-success"> <i class="fa-solid fa-toggle-on fa-xs"></i></button>
                                     </form>
                             </th>
+                            @else
+                            <th>
+                                <form  class="activeAlert" action="/ativarProduto/{{ $item->id }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="btn btn-danger"> <i class="fa-solid fa-toggle-off fa-xs"></i></button>
+                                </form>
+                            </th>
+                            @endif
                     </tr>
                 @endforeach
 
@@ -180,6 +191,24 @@
       }
     });
   })
+</script>
+
+<script>
+    $('.activeAlert').on('submit', function(e){
+  e.preventDefault();
+  swal({
+    title: "Atenção!",
+    text: "O produto será ativado, juntamente com o estoque que tiver quantidade maior que zero. Deseja ativar?",
+    icon: "warning",
+    buttons: ["Cancelar", "Confirmar"],
+    dangerMode: true,
+  })
+  .then((willDelete) => {
+    if (willDelete) {
+      this.submit()
+    }
+  });
+})
 </script>
 @endpush
 @push('formatar_script')

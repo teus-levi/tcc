@@ -103,11 +103,11 @@ class EditarController extends Controller
                         $item->delete();
                     }
                     $produto->delete();
-                    $request->session()->flash('mensagem', "Produto e estoque deletado com sucesso!");
+                    $request->session()->flash('mensagem', "Produto e estoque desativados com sucesso!");
                     return redirect()->back();
                 } else {
                 $produto->delete();
-                $request->session()->flash('mensagem', "Produto deletado com sucesso!");
+                $request->session()->flash('mensagem', "Produto desativado com sucesso!");
                 return redirect()->back();
                 }
             }

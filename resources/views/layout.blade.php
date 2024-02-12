@@ -58,14 +58,14 @@
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <li>
-                            estoque
+                            <li><a class="dropdown-item" href="{{ route('relatorioEstoque')}}">Estoque</a></li>
                         </li>
                         <li>
-                            estoque
+                            <li><a class="dropdown-item" href="{{ route('relatorioVendas')}}">Vendas</a></li>
 
                         </li>
                         <li>
-                            estoque
+                            <li><a class="dropdown-item" href="{{ route('relatorioProdutosVencidos')}}">Produtos vencidos</a></li>
 
                         </li>
                     </ul>

@@ -151,6 +151,9 @@ Route::middleware('auth')->group(function(){
     Route::get('/enviar-email', [SendMails::class, 'sendMail'])->name('sendMail')->middleware('can:administrador');
 
     Route::get('/relatorio/estoque', [RelatorioController::class, 'filtro_estoque'])->name('relatorioEstoque')->middleware('can:administrador');
+    Route::post('/relatorio/estoque', [RelatorioController::class, 'relatorio_estoque'])->name('gerarRelatorioEstoque')->middleware('can:administrador');
+    Route::get('/relatorio/vendas', [RelatorioController::class, 'filtro_vendas'])->name('relatorioVendas')->middleware('can:administrador');
+    Route::get('/relatorio/produtos', [RelatorioController::class, 'filtro_produtos_vencidos'])->name('relatorioProdutosVencidos')->middleware('can:administrador');
 });
 
 
