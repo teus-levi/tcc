@@ -9,7 +9,7 @@
 
 
     <h2 style="margin-left: 0%;" class="text-center">Marcas</h2>
-    
+
 <div class="container">
     <div class="row gx-3">
         <div class="col-12">
@@ -17,7 +17,7 @@
                 @csrf
                 <div class="col-12 col-md-6 mb-3">
                     <div class="form-floating">
-                        
+
                         <select class="form-select" name="periodo">
                             <option value="30" {{$filtros['periodo'] == 30 ? 'selected' : ''}}>Últimos 30 dias</option>
                             <option value="60" {{$filtros['periodo']  == 60 ? 'selected' : ''}}>Últimos 60 dias</option>
@@ -41,8 +41,9 @@
                 <div class="col-12 col-md-6">
                     <div class="form-floating">
                         <select class="form-select" name="classificacao">
-                            <option value="1" {{1  == 1 ? 'selected' : ''}}>Ativo</option>
-                            <option value="2" {{1 == 2 ? 'selected' : ''}}>Mais antigos primeiro</option>
+                            <option value="1" {{$filtros['classificacao']  == 1 ? 'selected' : ''}}>Ativo</option>
+                            <option value="2" {{$filtros['classificacao'] == 2 ? 'selected' : ''}}>Inativos</option>
+                            <option value="3" {{$filtros['classificacao'] == 3 ? 'selected' : ''}}>Independente</option>
                         </select>
                         <label>Classificação</label>
                     </div>
@@ -89,23 +90,30 @@
                         <th>{{$item->nome}}</th>
                         <th class="d-flex">
                             <div class="me-4">
-                            <form action="/editarMarca/{{ $item->id }}" method="POST">
+                            <form action="/editarMarca/{{ $item->id }}" method="GET">
                                 @csrf
-                                <button class="btn btn-warning btn-sm mb-2"> <i class="fa-solid fa-pen-to-square"></i> Editar</button>
+                                <button class="btn btn-warning btn-sm mb-2"> <i class="fa-solid fa-pen-to-square"></i></button>
                             </form>
                             </div>
                             <div>
-                            <form  class="deleteAlert" action="/removerMarca/{{ $item->id }}" method="POST">
-                                @csrf
-                                <button type="submit" class="btn btn-danger btn-sm"> <i class="fas fa-trash"></i> Excluir</button>    
-                            </form>
+                            @if(is_null($item->deleted_at))
+                                <form  class="deleteAlert" action="/removerMarca/{{ $item->id }}" method="GET">
+                                    @csrf
+                                    <button type="submit" class="btn btn-success btn-sm"> <i class="fa-solid fa-toggle-on fa-xs"></i></button>
+                                </form>
+                            @else
+                                <form  class="activeAlert" action="/ativarMarca/{{ $item->id }}" method="GET">
+                                    @csrf
+                                    <button type="submit" class="btn btn-danger btn-sm"> <i class="fa-solid fa-toggle-off fa-xs"></i></button>
+                                </form>
+                            @endif
                             </div>
                         </th>
-                        
-                        
+
+
                     </tr>
                 @endforeach
-                
+
             </tbody>
         </thead>
     </table>
@@ -124,7 +132,7 @@
     e.preventDefault();
     swal({
       title: "Atenção!",
-      text: "A marca será deletada, e os produtos desta marca não serão listados após essa operação. Deseja confirmar a exclusão?",
+      text: "A marca será desativada, e os produtos desta marca não serão listados após essa operação. Deseja confirmar?",
       icon: "warning",
       buttons: ["Cancelar", "Confirmar"],
       dangerMode: true,
@@ -133,7 +141,25 @@
       if (willDelete) {
         this.submit()
       }
-    }); 
+    });
   })
+</script>
+
+<script>
+    $('.activeAlert').on('submit', function(e){
+  e.preventDefault();
+  swal({
+    title: "Atenção!",
+    text: "A marca será ativada, e os produtos desta marca serão listados após essa operação, caso não estejam desativados. Deseja confirmar?",
+    icon: "warning",
+    buttons: ["Cancelar", "Confirmar"],
+    dangerMode: true,
+  })
+  .then((willDelete) => {
+    if (willDelete) {
+      this.submit()
+    }
+  });
+})
 </script>
 @endpush

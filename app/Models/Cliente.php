@@ -21,4 +21,8 @@ class Cliente extends Model
     //public $timestamps = false;
 
     protected $table = 'clientes';
+
+    public function getUsuario(){
+        return $this->hasOne(User::class, 'id', 'usuario');
+    }
 }

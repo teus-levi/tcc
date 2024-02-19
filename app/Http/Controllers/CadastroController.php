@@ -66,7 +66,8 @@ class CadastroController extends Controller
 
             if($validator->fails()){
                 return redirect('/cadastrar')
-                ->withErrors($validator);
+                ->withErrors($validator)
+                ->withInput();
             }else{
                 $request->session()->put('dados', $dados);
                 //dd($request);
@@ -126,7 +127,8 @@ class CadastroController extends Controller
 
         if($validator->fails()){
             return redirect('/cadastrar2')
-            ->withErrors($validator);
+            ->withErrors($validator)
+            ->withInput();
         }
 
 

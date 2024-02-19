@@ -67,19 +67,19 @@
                     <h1>CADASTRO</h1>
                     <div class="textfield">
                         <label for="email">Email</label>
-                        <input type="email" name="email" placeholder="Email">
+                        <input type="email" name="email" value="{{old('email')}}" placeholder="Email">
                     </div>
                     <div class="textfield">
                         <label for="email_confirmation">Confirmar email</label>
-                        <input type="email" name="email_confirmation" placeholder="Confirmar email">
+                        <input type="email" name="email_confirmation"  value="{{old('email_confirmation')}}" placeholder="Confirmar email">
                     </div>
                     <div class="textfield">
                         <label for="password">Senha</label>
-                        <input type="password" name="password" placeholder="Senha">
+                        <input type="password" name="password" value="{{old('password')}}" placeholder="Senha">
                     </div>
                     <div class="textfield">
                         <label for="password_confirmation">Confirmar senha</label>
-                        <input type="password" name="password_confirmation" placeholder="Confirmar senha">
+                        <input type="password" name="password_confirmation" value="{{old('password_confirmation')}}" placeholder="Confirmar senha">
                     </div>
                     <button class="btn-login" type="submit">Continuar</button>
                     <p>Etapa 1/2</p>

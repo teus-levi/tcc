@@ -12,6 +12,7 @@ use App\Models\Estoque;
 use App\Models\Venda;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class ListarController extends Controller
 {
@@ -110,7 +111,7 @@ class ListarController extends Controller
         $marcas = Marca::query()->OrderBy('id')->paginate(10);
         $periodo = 9999;
         $ordenacao = 1;
-        $filtros = ['periodo' => $periodo, 'ordenacao' => $ordenacao];
+        $filtros = ['periodo' => $periodo, 'ordenacao' => $ordenacao, 'classificacao' => 1];
 
         return view('listar.marcas', compact('marcas', 'filtros'));
     }
@@ -136,7 +137,7 @@ class ListarController extends Controller
             $dataLimite = 0;
         }
 
-        if(isset($pesquisa)){
+        if($request->classificacao == 1){
             $marcas = DB::table('marcas')
             ->whereNull('marcas.deleted_at')
             ->where('marcas.created_at', '>=', $dataLimite)
@@ -145,13 +146,21 @@ class ListarController extends Controller
             ->orderBy('marcas.nome', $ordenacao)->paginate(10);
 
             return view('listar.marcas', compact('marcas', 'filtros'));
-        } else {
+        } else if($request->classificacao == 2) {
             $marcas = DB::table('marcas')
-            ->whereNull('marcas.deleted_at')
+            ->whereNotNull('marcas.deleted_at')
             ->where('marcas.created_at', '>=', $dataLimite)
             ->where('marcas.nome', 'like', '%'. $pesquisa . '%')
             ->select('marcas.*')
-            ->orderBy('marcas.nome', $ordenacao)->paginate(10);
+            ->orderBy('marcas.created_at', $ordenacao)->paginate(10);
+
+            return view('listar.marcas', compact('marcas', 'filtros'));
+        } else {
+            $marcas = DB::table('marcas')
+            ->where('marcas.created_at', '>=', $dataLimite)
+            ->where('marcas.nome', 'like', '%'. $pesquisa . '%')
+            ->select('marcas.*')
+            ->orderBy('marcas.created_at', $ordenacao)->paginate(10);
 
             return view('listar.marcas', compact('marcas', 'filtros'));
         }
@@ -162,7 +171,7 @@ class ListarController extends Controller
 
         $periodo = 9999;
         $ordenacao = 1;
-        $filtros = ['periodo' => $periodo, 'ordenacao' => $ordenacao];
+        $filtros = ['periodo' => $periodo, 'ordenacao' => $ordenacao, 'classificacao' => 1];
 
         return view('listar.categorias', compact('categorias', 'filtros'));
     }
@@ -188,22 +197,30 @@ class ListarController extends Controller
             $dataLimite = 0;
         }
 
-        if(isset($pesquisa)){
+        if($request->classificacao == 1){
             $categorias = DB::table('categorias')
             ->whereNull('categorias.deleted_at')
             ->where('categorias.created_at', '>=', $dataLimite)
             ->where('categorias.nome', 'like', '%'. $pesquisa . '%')
             ->select('categorias.*')
-            ->orderBy('categorias.nome', $ordenacao)->paginate(10);
+            ->orderBy('categorias.created_at', $ordenacao)->paginate(10);
+
+            return view('listar.categorias', compact('categorias', 'filtros'));
+        } else if($request->classificacao == 2){
+            $categorias = DB::table('categorias')
+            ->whereNotNull('categorias.deleted_at')
+            ->where('categorias.created_at', '>=', $dataLimite)
+            ->where('categorias.nome', 'like', '%'. $pesquisa . '%')
+            ->select('categorias.*')
+            ->orderBy('categorias.created_at', $ordenacao)->paginate(10);
 
             return view('listar.categorias', compact('categorias', 'filtros'));
         } else {
             $categorias = DB::table('categorias')
-            ->whereNull('categorias.deleted_at')
             ->where('categorias.created_at', '>=', $dataLimite)
             ->where('categorias.nome', 'like', '%'. $pesquisa . '%')
             ->select('categorias.*')
-            ->orderBy('categorias.nome', $ordenacao)->paginate(10);
+            ->orderBy('categorias.created_at', $ordenacao)->paginate(10);
 
             return view('listar.categorias', compact('categorias', 'filtros'));
         }
@@ -281,9 +298,32 @@ class ListarController extends Controller
 
     public function list_pagamento(Request $request){
         $itens = $request->except('_token');
-        $request->session()->put('compra', $itens);
 
-        return view('listar.formaPagamento');
+        $cep = preg_replace("/[^0-9]/", "", $request->cep);
+        $resposta = Http::get('https://viacep.com.br/ws/'.$cep.'/json/');
+        $dadosApi = $resposta->json();
+
+        if(!empty($dadosApi['erro'])){
+            $request->session()->flash('erro', "O CEP está incorreto, por isso o endereço informado não foi salvo. Tente novamente.");
+            return redirect('/confirmarEndereco');
+        }else if($dadosApi['localidade'] != "Umuarama"){
+            $request->session()->flash('erro', "No momento atendemos apenas a cidade de Umuarama. Em breve teremos novas localidades.");
+            return redirect('/confirmarEndereco');
+        } else{
+            if(is_null($request->logradouro)){
+                $request->session()->flash('erro', "Preencha o campo de logradouro!");
+                return redirect('/confirmarEndereco');
+            } else if(is_null($request->bairro)){
+                $request->session()->flash('erro', "Preencha o campo do bairro!");
+                return redirect('/confirmarEndereco');
+            } else {
+                $request->session()->put('compra', $itens);
+
+                return view('listar.formaPagamento');
+            }
+
+        }
+
     }
 
     public function list_filt_pedidos(Request $request){

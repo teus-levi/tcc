@@ -5,12 +5,12 @@
 @endsection
 
 @section('conteudo')
-<h2 style="margin-left: 0%;" class="text-center mb-3">Relatório de Vendas</h2>
+<h2 style="margin-left: 0%;" class="text-center mb-3">Relatório de Produtos Vencidos</h2>
 
 <div class="container">
     <div class="row gx-3">
         <div class="col-12">
-            <form method="POST" class="row mb-3" target="_blank" action="/relatorio/estoque">
+            <form method="POST" class="row mb-3" target="_blank" action="/relatorio/produtos">
                 @csrf
                 <div class="col-12 col-md-6">
                     <div class="form-floating">

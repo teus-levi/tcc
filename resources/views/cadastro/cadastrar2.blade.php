@@ -47,19 +47,19 @@
                     <h1>CADASTRO DE USUÁRIO</h1>
                     <div class="textfield">
                         <label for="nomeCompleto">Nome completo</label>
-                        <input type="text" name="nomeCompleto" placeholder="Nome completo">
+                        <input type="text" name="nomeCompleto" value="{{old('nomeCompleto')}}" placeholder="Nome completo">
                     </div>
                     <div class="textfield">
                         <label for="cpf">CPF</label>
-                        <input id="cpf" type="text" name="cpf" placeholder="CPF">
+                        <input id="cpf" type="text" name="cpf" value="{{old('cpf')}}" placeholder="CPF">
                     </div>
                     <div class="textfield">
                         <label for="dataNascimento">Data de nascimento</label>
-                        <input type="date" name="dataNascimento" placeholder="Data de nascimento">
+                        <input type="date" name="dataNascimento" value="{{old('dataNascimento')}}" placeholder="Data de nascimento">
                     </div>
                     <div class="textfield">
                         <label for="telefone">Telefone</label>
-                        <input id="telefone" type="text" name="telefone" placeholder="Telefone">
+                        <input id="telefone" type="text" name="telefone" value="{{old('telefone')}}" placeholder="Telefone">
                     </div>
                     <button class="btn-login">Finalizar</button>
                     <p>Etapa 2/2</p>

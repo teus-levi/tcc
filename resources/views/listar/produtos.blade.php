@@ -134,18 +134,18 @@
                             @endif
                             @if(is_null($item->deleted_at))
                             <th>
-                                    <form action="/editarProduto/{{ $item->id }}" method="POST">
+                                    <form action="/editarProduto/{{ $item->id }}" method="GET">
                                         @csrf
                                         <button class="btn btn-warning mb-2"> <i class="fa-solid fa-pen-to-square fa-xs"></i></button>
                                     </form>
-                                    <form  class="deleteAlert" action="/removerProduto/{{ $item->id }}" method="POST">
+                                    <form  class="deleteAlert" action="/removerProduto/{{ $item->id }}" method="GET">
                                         @csrf
                                         <button type="submit" class="btn btn-success"> <i class="fa-solid fa-toggle-on fa-xs"></i></button>
                                     </form>
                             </th>
                             @else
                             <th>
-                                <form  class="activeAlert" action="/ativarProduto/{{ $item->id }}" method="POST">
+                                <form  class="activeAlert" action="/ativarProduto/{{ $item->id }}" method="GET">
                                     @csrf
                                     <button type="submit" class="btn btn-danger"> <i class="fa-solid fa-toggle-off fa-xs"></i></button>
                                 </form>
@@ -180,7 +180,7 @@
     e.preventDefault();
     swal({
       title: "Atenção!",
-      text: "O produto será deletado, juntamente com o estoque do mesmo. Deseja confirmar a exclusão?",
+      text: "O produto será desativado, juntamente com o estoque do mesmo. Deseja confirmar?",
       icon: "warning",
       buttons: ["Cancelar", "Confirmar"],
       dangerMode: true,

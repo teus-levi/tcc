@@ -29,8 +29,8 @@
 
                                 <span class="product-price-final">
                                     R$
-                                    <span class="precoVendaAtual product-price-final">
-                                        {{$produto[0]->precoVendaAtual}}
+                                    <span class="product-price-final">
+                                        {{number_format($produto[0]->precoVendaAtual / 100,2,",",".")}}
                                     </span>
                                 </span>
 
@@ -116,14 +116,6 @@
                             <div class="text-end">
 
 
-    <button class="btn-share btn btn-outline-primary btn-sm d-inline-flex align-items-center" type="button" data-text-share="Share" data-text-copy="Copy" data-text-copied="Copied!" data-share-title="
-        Bag Series 1
-     – KS BootShop" onclick="onLinkShare(this, event)">
-        <svg xmlns="http://www.w3.org/2000/svg" class="me-3" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-        </svg>
-        Compartilhar
-    </button>
                             </div>
 
                     </div>
@@ -155,8 +147,8 @@
                                                 <!-- Product name-->
                                                 <h5 class="fw-bolder">{{$produtoCategoria->nome}}</h5>
                                                 <!-- Product price-->
-                                                R$ <span class="precoVendaAtual">
-                                                {{$produtoCategoria->precoVendaAtual}}
+                                                R$ <span class="">
+                                                    {{number_format($produtoCategoria->precoVendaAtual / 100,2,",",".")}}
                                                 </span>
                                             </div>
                                         </div>

@@ -14,9 +14,7 @@ use App\Http\Livewire\Notificacoes;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\RegisterEmail;
-
-
-
+use Illuminate\Support\Facades\DB;
 
 class RegistrarController extends Controller
 {
@@ -230,6 +228,7 @@ class RegistrarController extends Controller
 
 
             //Adicionando produtos do carrinho na venda
+            DB::beginTransaction();
             foreach (session('cart') as $id => $item) {
                 $produto = Produto::find($item['id']);
                 if(!is_null($produto)){
@@ -262,17 +261,20 @@ class RegistrarController extends Controller
                         }
                     } else {
                         $request->session()->flash('erro', "O produto {$produto->nome} está com uma quantidade em estoque menor do que informado, fazendo a compra não ser finalizada. Por favor ajuste a quantidade. Quantidade restante: {$produto->getEstoques[0]->quantidade}.");
+                        DB::rollBack();
                         return redirect()->route('listarCarrinho');
                     }
 
 
                 } else {
                     $request->session()->flash('erro', "O produto informado (id {$item['id']}) está incorreto, verifique novamente e/ou contate o administrador!");
+                    DB::rollBack();
                     return redirect()->route('listarCarrinho');
                 }
 
 
             }
+            DB::commit();
 
             //envio de email
             $usuario = User::find($user);

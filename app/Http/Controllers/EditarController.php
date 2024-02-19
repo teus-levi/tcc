@@ -104,15 +104,47 @@ class EditarController extends Controller
                     }
                     $produto->delete();
                     $request->session()->flash('mensagem', "Produto e estoque desativados com sucesso!");
-                    return redirect()->back();
+                    return redirect()->route('listarProdutos');
                 } else {
                 $produto->delete();
                 $request->session()->flash('mensagem', "Produto desativado com sucesso!");
-                return redirect()->back();
+                return redirect()->route('listarProdutos');
                 }
             }
         } else {
             return redirect()->route('login');
+        }
+    }
+
+    public function active_prod(Request $request){
+        $produto = Produto::withTrashed()->find($request->id);
+            if($produto){
+                $estoque = Estoque::withTrashed()->where('produto', $request->id)->get();
+                if($estoque){
+                    foreach ($estoque as $item) {
+                        /*
+                        Estoque::where('id', $item->id)
+                                ->where('quantidade', '>', 0)
+                                ->update([
+                                    'deleted_at' => NULL
+                                ]);
+                        */
+                        //apenas estoque com quantidade para ser ativado
+                        if($item->quantidade > 0 ){
+                            $item->deleted_at = NULL;
+                            $item->save();
+                        }
+                    }
+                    $produto->deleted_at = NULL;
+                    $produto->save();
+                    $request->session()->flash('mensagem', "Produto e estoque(s) com quantidade ativados com sucesso!");
+                    return redirect()->route('listarProdutos');
+                } else {
+                    $produto->deleted_at = NULL;
+                    $produto->save();
+                    $request->session()->flash('mensagem', "Produto ativado com sucesso!");
+                    return redirect()->route('listarProdutos');
+                }
         }
     }
 
@@ -199,11 +231,24 @@ class EditarController extends Controller
             if($marca){
                 $marca->delete();
                 $request->session()->flash('mensagem', "Marca deletada com sucesso!");
-                return redirect()->back();
+                return redirect()->route('listarMarcas');
             }
         } else {
             return redirect()->route('login');
         }
+    }
+
+    public function active_marca(Request $request){
+        //dd($request->id);
+        $marca = Marca::withTrashed()->find($request->id);
+            if($marca){
+                $marca->deleted_at = NULL;
+                $marca->save();
+                $request->session()->flash('mensagem', "Marca ativada com sucesso!");
+                return redirect()->route('listarMarcas');
+            } else {
+                return redirect('/home');
+            }
     }
 
     public function edit_categoria(Request $request){
@@ -232,12 +277,25 @@ class EditarController extends Controller
             if($categoria){
                 $categoria->delete();
                 $request->session()->flash('mensagem', "Categoria deletada com sucesso!");
-                return redirect()->back();
+                return redirect()->route('listarCategorias');
             }
         } else {
             return redirect()->route('login');
         }
     }
+
+    public function active_categoria(Request $request){
+            $categoria = Categoria::withTrashed()->find($request->id);
+            if($categoria){
+                $categoria->deleted_at = NULL;
+                $categoria->save();
+                $request->session()->flash('mensagem', "Categoria ativada com sucesso!");
+                return redirect()->route('listarCategorias');
+            } else{
+                return redirect('/home');
+            }
+    }
+
     //confirmação do endereço para salvar na entrega
     public function confirmar_endereco(){
         if(Auth::check()){
@@ -458,7 +516,12 @@ class EditarController extends Controller
     //usuário cancelando o pedido que fez
     public function store_pedido(Request $request){
         $pedido = Venda::find($request->id);
+        $cliente = Cliente::first('usuario', Auth::id());
         if($pedido){
+            if($pedido->cliente != $cliente->id && $cliente->getUsuario->administrador == 0){
+                $request->session()->flash('erro', 'Usuários diferentes, entre na conta correta.');
+                return redirect('/home');
+            }
             //separando a quantidade dos produtos em estoque
             $produtoEstoque = $pedido->getItens;
             if($pedido->statusEntrega != "Em preparação." && $pedido->statusEntrega != "Aguardando pix."){
