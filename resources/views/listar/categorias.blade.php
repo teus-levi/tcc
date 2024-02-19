@@ -90,10 +90,34 @@
                         <th>{{$item->nome}}</th>
                         <th class="d-flex">
                             <div class="me-4">
-                            <form action="/editarCategoria/{{ $item->id }}" method="GET">
-                                @csrf
-                                <button class="btn btn-warning btn-sm mb-2"> <i class="fa-solid fa-pen-to-square"></i></button>
-                            </form>
+                                <a class="btn btn-warning btn-sm mb-2" data-bs-toggle="modal" href="#editar{{$item->id}}"> <i class="fa-solid fa-pen-to-square"></i></a>
+
+                                <!-- MODAL -->
+                                <div class="modal fade" id="editar{{$item->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Alterar categoria</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                            <div class="modal-body ">
+                                            <form action="/storeEditCategoria/{{$item->id}}" method="POST">
+                                                @csrf
+                                                <p class=" d-flex justify-content-center">Informe o nome da categoria:</p>
+                                                <input type="text" name="nome" value="{{$item->nome}}" style="width: 100%;">
+                                                </div>
+                                                <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                                                <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Salvar</button>
+                                            </form>
+                                            </div>
+                                    </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div>
+
                             </div>
                             <div>
                                 @if($item->deleted_at == NULL)

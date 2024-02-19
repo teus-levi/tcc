@@ -215,6 +215,12 @@ class EditarController extends Controller
     }
     public function store_marca(Request $request){
         if(Auth::check()){
+            $nome = Marca::first()->withTrashed()->where('nome', $request->nome)->get();
+            //dd();
+            if(isset($nome[0]->nome)){
+                $request->session()->flash('erro', "Já existe uma marca cadastrada com esse nome!");
+                return redirect('/listarMarcas');
+            }
             Marca::where('id', $request->id)->update([
                 'nome' => $request->nome
             ]);
@@ -261,6 +267,12 @@ class EditarController extends Controller
     }
     public function store_categoria(Request $request){
         if(Auth::check()){
+            $nome = Categoria::first()->withTrashed()->where('nome', $request->nome)->get();
+            //dd();
+            if(isset($nome[0]->nome)){
+                $request->session()->flash('erro', "Já existe uma categoria cadastrada com esse nome!");
+                return redirect('/listarCategorias');
+            }
             Categoria::where('id', $request->id)->update([
                 'nome' => $request->nome
             ]);

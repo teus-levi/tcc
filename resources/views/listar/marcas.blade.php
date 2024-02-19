@@ -90,10 +90,31 @@
                         <th>{{$item->nome}}</th>
                         <th class="d-flex">
                             <div class="me-4">
-                            <form action="/editarMarca/{{ $item->id }}" method="GET">
-                                @csrf
-                                <button class="btn btn-warning btn-sm mb-2"> <i class="fa-solid fa-pen-to-square"></i></button>
-                            </form>
+                                <a class="btn btn-warning btn-sm mb-2" data-bs-toggle="modal" href="#editar{{$item->id}}"> <i class="fa-solid fa-pen-to-square"></i></a>
+
+                                <!-- MODAL -->
+                                <div class="modal fade" id="editar{{$item->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Alterar marca</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                            <div class="modal-body ">
+                                            <form action="/storeEditMarca/{{$item->id}}" method="POST">
+                                                @csrf
+                                                <p class=" d-flex justify-content-center">Informe o nome da marca:</p>
+                                                <input type="text" name="nome" value="{{$item->nome}}" style="width: 100%;">
+                                                </div>
+                                                <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                                                <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Salvar</button>
+                                            </form>
+                                            </div>
+                                    </div>
+                                    </div>
+                                </div>
+
                             </div>
                             <div>
                             @if(is_null($item->deleted_at))
@@ -122,6 +143,7 @@
             {{$marcas->links()}}
         </div>
     </div>
+
 </div>
 </div>
 @endsection
