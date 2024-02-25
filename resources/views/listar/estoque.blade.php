@@ -10,7 +10,7 @@
 
     <h2 style="margin-left: 0%;" class="text-center">Estoque</h2>
     <p class="text-muted text-center mb-5">Estoque do produto: {{$est[0]->n_produto}}</p>
-    
+
 
 
 <div class="container">
@@ -46,16 +46,16 @@
                         <th>
                         <form action="/editarEstoque/{{ $item->id }}" method="GET">
                             @csrf
-                            <button class="btn btn-warning btn-sm mb-2"> <i class="fa-solid fa-pen-to-square"></i> Editar</button>
+                            <button class="btn btn-warning btn-sm mb-2"> <i class="fa-solid fa-pen-to-square"></i></button>
                         </form>
                         <form  class="deleteAlert" action="/removerEstoque/{{ $item->id }}" method="POST">
                             @csrf
-                            <button type="submit" class="btn btn-danger btn-sm"> <i class="fas fa-trash"></i> Excluir</button>    
+                            <button type="submit" class="btn btn-success btn-sm"> <i class="fa-solid fa-toggle-on fa-xs"></i></button>
                         </form>
                         </th>
                     </tr>
                 @endforeach
-                
+
             </tbody>
         </thead>
     </table>
@@ -77,7 +77,7 @@
       if (willDelete) {
         this.submit()
       }
-    }); 
+    });
   })
 </script>
 @endpush

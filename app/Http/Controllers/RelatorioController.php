@@ -63,18 +63,52 @@ class RelatorioController extends Controller
     }
 
     public function relatorio_vendas(Request $request){
-        $vendas = DB::table('produtos')
-        ->join('categorias', 'categorias.id', '=', 'produtos.categoria')
-        ->join('marcas', 'marcas.id', '=', 'produtos.marca')
-        ->join('itens_vendas', 'itens_vendas.produto', 'produtos.id')
-        ->whereNull('itens_vendas.deleted_at')
-        ->select('produtos.*', DB::raw('SUM(itens_vendas.quantidade) as quantidade'),
-        'categorias.nome as n_categoria', 'marcas.nome as n_marca')
-        ->groupBy('produtos.id')
-        ->orderBy('quantidade', 'desc')
-        ->orderBy('produtos.nome', 'asc')->get();
-
-        $pdf = Pdf::loadView('relatorios.venda', compact('vendas'));
+        //dd($request->mes);
+        if($request->status == 3){
+            $vendas = DB::table('produtos')
+            ->join('categorias', 'categorias.id', '=', 'produtos.categoria')
+            ->join('marcas', 'marcas.id', '=', 'produtos.marca')
+            ->join('itens_vendas', 'itens_vendas.produto', 'produtos.id')
+            ->whereNull('itens_vendas.deleted_at')
+            ->where('itens_vendas.created_at', 'like', $request->mes . '%')
+            ->select('produtos.*', DB::raw('SUM(itens_vendas.quantidade) as quantidade'),
+            'categorias.nome as n_categoria', 'marcas.nome as n_marca')
+            ->groupBy('produtos.id')
+            ->orderBy('quantidade', 'desc')
+            ->orderBy('produtos.nome', 'asc')->get();
+        } else if($request->status == 2){
+            $vendas = DB::table('produtos')
+            ->join('categorias', 'categorias.id', '=', 'produtos.categoria')
+            ->join('marcas', 'marcas.id', '=', 'produtos.marca')
+            ->join('itens_vendas', 'itens_vendas.produto', 'produtos.id')
+            ->whereNull('itens_vendas.deleted_at')
+            ->whereNotNull('produtos.deleted_at')
+            ->where('itens_vendas.created_at', 'like', $request->mes . '%')
+            ->select('produtos.*', DB::raw('SUM(itens_vendas.quantidade) as quantidade'),
+            'categorias.nome as n_categoria', 'marcas.nome as n_marca')
+            ->groupBy('produtos.id')
+            ->orderBy('quantidade', 'desc')
+            ->orderBy('produtos.nome', 'asc')->get();
+        } else {
+            $vendas = DB::table('produtos')
+            ->join('categorias', 'categorias.id', '=', 'produtos.categoria')
+            ->join('marcas', 'marcas.id', '=', 'produtos.marca')
+            ->join('itens_vendas', 'itens_vendas.produto', 'produtos.id')
+            ->whereNull('itens_vendas.deleted_at')
+            ->whereNull('produtos.deleted_at')
+            ->where('itens_vendas.created_at', 'like', $request->mes . '%')
+            ->select('produtos.*', DB::raw('SUM(itens_vendas.quantidade) as quantidade'),
+            'categorias.nome as n_categoria', 'marcas.nome as n_marca')
+            ->groupBy('produtos.id')
+            ->orderBy('quantidade', 'desc')
+            ->orderBy('produtos.nome', 'asc')->get();
+        }
+        $mes = $request->mes;
+        if(isset($mes)){
+        $pdf = Pdf::loadView('relatorios.venda', compact('vendas', 'mes'));
+        } else{
+            $pdf = Pdf::loadView('relatorios.venda', compact('vendas'));
+        }
         return $pdf->stream();
     }
 

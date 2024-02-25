@@ -236,7 +236,7 @@ class EditarController extends Controller
             $marca = Marca::find($request->id);
             if($marca){
                 $marca->delete();
-                $request->session()->flash('mensagem', "Marca deletada com sucesso!");
+                $request->session()->flash('mensagem', "Marca desativada com sucesso!");
                 return redirect()->route('listarMarcas');
             }
         } else {

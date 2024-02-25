@@ -22,8 +22,16 @@
                         <label>Status Produto</label>
                     </div>
                 </div>
-                <div class="col d-flex align-items-center justify-content-end">
-                    <button type="submit"  class="btn btn-primary w-50 h-75">Filtrar</button>
+                <div class="col-12 col-md-6 d-flex align-items-center justify-content-end">
+                    <label class="me-3" for="mes">Mês da venda</label>
+                    <div class="">
+                    <input type="month" class="form-control" name="mes" id="mes">
+                    </div>
+                </div>
+                <div class="col mt-5">
+                    <div class="col d-flex align-items-center justify-content-center">
+                        <button type="submit"  class="btn btn-primary w-50 h-100">Filtrar</button>
+                    </div>
                 </div>
             </form>
         </div>

@@ -232,18 +232,61 @@ class RegistrarController extends Controller
             foreach (session('cart') as $id => $item) {
                 $produto = Produto::find($item['id']);
                 if(!is_null($produto)){
-                $produtoQtd = $produto->getEstoques[0]->quantidade;
+                    //verificar todos os estoques do produto
+                    $produtoQtd = 0;
+                    foreach($produto->getEstoques as $estoque){
+                        $produtoQtd += $estoque->quantidade;
+                    }
+                //$produtoQtd = $produto->getEstoques[0]->quantidade;
                     if($produtoQtd >= $item['quantidade']){
                         //Após verificação de quantidade, salva a venda
                         $venda->save();
                         //Criando registro na tabela ItensVendas
-                        $produtoVenda = ['produto' => $produto->id, 'quantidade' => $item['quantidade'], 'valorUnitario' => $produto->precoVendaAtual, 'venda' => $venda->id];
+                        $listaEstoque = '';
+                        $qtdTotal = $item['quantidade'];
+                        foreach($produto->getEstoques as $estoque){
+                            if($qtdTotal > $estoque->quantidade){
+                                //quantidade maior que o estoque atual
+                                $qtdTotal -= $estoque->quantidade;
+                                $listaEstoque .= $estoque->id . ", " . $estoque->quantidade . ", ";
+                                Estoque::where('id', $estoque->id)->update([
+                                    'quantidade' => 0
+                                ]);
+                                //desativando estoque após zerar
+                                $estoqueVazio = Estoque::find($estoque->id);
+                                $estoqueVazio->delete();
+                                $request->session()->forget('cart');
+                            } else if($qtdTotal < $estoque->quantidade){
+                                //quantidade menor que o estoque atual
+                                $listaEstoque .= $estoque->id . ", " . $qtdTotal . ", ";
+                                $novaQtd = $estoque->quantidade - $qtdTotal;
+                                Estoque::where('id', $estoque->id)->update([
+                                    'quantidade' => $novaQtd
+                                ]);
+                                break;
+                            } else{
+                                //A mesma quantidade do estoque atual
+                                $listaEstoque .= $estoque->id . ", " . $estoque->quantidade . ", ";
+                                Estoque::where('id', $estoque->id)->update([
+                                    'quantidade' => 0
+                                ]);
+                                //desativando estoque após zerar
+                                $estoqueVazio = Estoque::find($estoque->id);
+                                $estoqueVazio->delete();
+                                $request->session()->forget('cart');
+                                break;
+                            }
+                        }
+                        $produtoVenda = ['listaEstoque' => $listaEstoque, 'produto' => $produto->id, 'quantidade' => $item['quantidade'], 'valorUnitario' => $produto->precoVendaAtual, 'venda' => $venda->id];
                         $itensVenda = ItensVenda::create($produtoVenda);
                         //Modificando quantidade na tabela do produto, pegando o estoque mais antigo que não seja preenchido o campo de delete
+                        /*
                         $quantidade = $produtoQtd - $item['quantidade'];
+
                         Estoque::where('id', $produto->getEstoques[0]->id)->update([
                             'quantidade' => $quantidade
                         ]);
+                        */
                         //Ajustando notificações
                         /*
                         $notif = new Notificacao;
@@ -251,7 +294,7 @@ class RegistrarController extends Controller
                         $notif->venda = $venda->id;
                         $notif->save();
                         */
-
+                        /*
                         if($quantidade == 0){
                             //o get pode trazer mais de 1 objeto, o first traria valor único
                             //também poderia usar o delete na frente da collection
@@ -259,8 +302,9 @@ class RegistrarController extends Controller
                             $estoqueVazio[0]->delete();
                             $request->session()->forget('cart');
                         }
+                        */
                     } else {
-                        $request->session()->flash('erro', "O produto {$produto->nome} está com uma quantidade em estoque menor do que informado, fazendo a compra não ser finalizada. Por favor ajuste a quantidade. Quantidade restante: {$produto->getEstoques[0]->quantidade}.");
+                        $request->session()->flash('erro', "O produto {$produto->nome} está com uma quantidade em estoque menor do que informado, fazendo a compra não ser finalizada. Por favor ajuste a quantidade. Quantidade restante: {$produtoQtd}.");
                         DB::rollBack();
                         return redirect()->route('listarCarrinho');
                     }

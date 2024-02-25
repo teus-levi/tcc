@@ -84,24 +84,24 @@
                         <th>Preço total</th>
                     </tr>
                     <tbody>
-                        <?php 
+                        <?php
                             $produtos =  $pedido->getItens;
                             $valorTotal = 0;
                         ?>
                         @if(!empty($produtos))
                         @foreach ($produtos as $item)
-                            <?php 
+                            <?php
                                 $valorTotal += ($item->quantidade * $item->valorUnitario);
                             ?>
                             <tr>
                                 <th>{{$item->produto}}</th>
                                 <th>
                                     <div style="width: 7em; height: 7em;" class="d-block">
-                                    <img src="/storage/{{$item->getProduto->imagem}}" class="img-fluid" alt="...">
+                                    <img src="/storage/{{$item->getProdutoDeleted->imagem}}" class="img-fluid" alt="...">
                                     </div>
                                 </th>
-                                <th>{{$item->getProduto->nome}}</th>
-                                <th>{{$item->getProduto->getMarca->nome}}</th>
+                                <th>{{$item->getProdutoDeleted->nome}}</th>
+                                <th>{{$item->getProdutoDeleted->getMarca->nome}}</th>
                                 <th class="preco">{{$item->valorUnitario}}</th>
                                 <th>
                                     @if(!is_null($item->quantidade))
@@ -121,9 +121,9 @@
             </table>
             <legend class="mt-5">Geral</legend>
             <hr>
-            
+
                 <div class="row mb-3 g-3">
-                            
+
                     <div class="form-floating mb-3 col-sm-12 col-md-4">
                         <input class="form-control" type="text" readonly value="{{$pedido->modoRecebimento}}" id="pagamento" placeholder=" " />
                         <label for="pagamento" >Modo de pagamento</label>
@@ -150,9 +150,9 @@
                             <label for="saldo">Motivo Cancelamento</label>
                         </div>
                     @endif
-                            
+
                 </div>
-            
+
                 <div class="mb-3 text-left mb-5 d-flex">
                     <a class="btn btn-lg btn-light btn-outline-primary me-3" href="{{route('listarPedidos')}}">Voltar</a>
                     @if($pedido->statusEntrega == "Em preparação." || $pedido->statusEntrega == "Aguardando pix.")
@@ -162,7 +162,7 @@
                         </form>
                     @endif
                 </div>
-            
+
         </div>
     </div>
 </main>
@@ -183,7 +183,7 @@
       if (willDelete) {
         this.submit()
       }
-    }); 
+    });
   })
 </script>
 @endpush

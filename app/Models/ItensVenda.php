@@ -12,11 +12,15 @@ class ItensVenda extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'produto', 'quantidade', 'valorUnitario', 'venda'
+        'listaEstoque', 'produto', 'quantidade', 'valorUnitario', 'venda'
     ];
 
     public function getProduto(){
         return $this->belongsTo(Produto::class, 'produto', 'id');
+    }
+
+    public function getProdutoDeleted(){
+        return $this->belongsTo(Produto::class, 'produto', 'id')->withTrashed();
     }
 
     /**
