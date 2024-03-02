@@ -122,18 +122,48 @@ class RelatorioController extends Controller
 
     public function relatorio_produtos_vencidos(Request $request){
         $data = '2024-07';
-        $vencidos = DB::table('produtos')
+        date_default_timezone_set('America/Sao_Paulo');
+        $dataAtual = date('Y-m');
+        if($request->status == 3){
+            $vencidos = DB::table('produtos')
+            ->leftJoin('estoques', 'produtos.id', '=', 'estoques.produto')
+            ->join('categorias', 'categorias.id', '=', 'produtos.categoria')
+            ->join('marcas', 'marcas.id', '=', 'produtos.marca')
+            ->whereNull('estoques.deleted_at')
+            ->whereNotNull('estoques.id')
+            ->where('estoques.validade', '<', $dataAtual)
+            ->select('produtos.*', 'estoques.id as estoque', 'estoques.validade',
+            'categorias.nome as n_categoria', 'marcas.nome as n_marca')
+            ->orderBy('estoques.validade', 'asc')
+            ->orderBy('produtos.nome', 'asc')->get();
+        } else if($request->status == 2){
+            $vencidos = DB::table('produtos')
+                            ->leftJoin('estoques', 'produtos.id', '=', 'estoques.produto')
+                            ->join('categorias', 'categorias.id', '=', 'produtos.categoria')
+                            ->join('marcas', 'marcas.id', '=', 'produtos.marca')
+                            ->whereNotNull('produtos.deleted_at')
+                            ->whereNull('estoques.deleted_at')
+                            ->whereNotNull('estoques.id')
+                            ->where('estoques.validade', '<', $dataAtual)
+                            ->select('produtos.*', 'estoques.id as estoque', 'estoques.validade',
+                            'categorias.nome as n_categoria', 'marcas.nome as n_marca')
+                            ->orderBy('estoques.validade', 'asc')
+                            ->orderBy('produtos.nome', 'asc')->get();
+        } else{
+            $vencidos = DB::table('produtos')
                             ->leftJoin('estoques', 'produtos.id', '=', 'estoques.produto')
                             ->join('categorias', 'categorias.id', '=', 'produtos.categoria')
                             ->join('marcas', 'marcas.id', '=', 'produtos.marca')
                             ->whereNull('produtos.deleted_at')
                             ->whereNull('estoques.deleted_at')
                             ->whereNotNull('estoques.id')
-                            ->where('estoques.validade', '>', $data)
+                            ->where('estoques.validade', '<', $dataAtual)
                             ->select('produtos.*', 'estoques.id as estoque', 'estoques.validade',
                             'categorias.nome as n_categoria', 'marcas.nome as n_marca')
                             ->orderBy('estoques.validade', 'asc')
                             ->orderBy('produtos.nome', 'asc')->get();
+        }
+
 
         $pdf = Pdf::loadView('relatorios.vencidos', compact('vencidos'));
         return $pdf->stream();

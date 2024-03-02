@@ -48,10 +48,17 @@
                             @csrf
                             <button class="btn btn-warning btn-sm mb-2"> <i class="fa-solid fa-pen-to-square"></i></button>
                         </form>
-                        <form  class="deleteAlert" action="/removerEstoque/{{ $item->id }}" method="POST">
-                            @csrf
-                            <button type="submit" class="btn btn-success btn-sm"> <i class="fa-solid fa-toggle-on fa-xs"></i></button>
-                        </form>
+                        @if($item->deleted_at == NULL)
+                            <form  class="deleteAlert" action="/removerEstoque/{{ $item->id }}" method="POST">
+                                @csrf
+                                <button type="submit" class="btn btn-success btn-sm"> <i class="fa-solid fa-toggle-on fa-xs"></i></button>
+                            </form>
+                        @else
+                            <form  class="deleteAlert" action="/ativarEstoque/{{ $item->id }}" method="POST">
+                                @csrf
+                                <button type="submit" class="btn btn-danger btn-sm"> <i class="fa-solid fa-toggle-off fa-xs"></i></button>
+                            </form>
+                        @endif
                         </th>
                     </tr>
                 @endforeach
@@ -68,7 +75,7 @@
     e.preventDefault();
     swal({
       title: "Atenção!",
-      text: "O estoque será deletado, deseja confirmar a exclusão?",
+      text: "O estoque será desativado, deseja confirmar?",
       icon: "warning",
       buttons: ["Cancelar", "Confirmar"],
       dangerMode: true,

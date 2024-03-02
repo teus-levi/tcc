@@ -9,7 +9,7 @@
 
 
     <h2 style="margin-left: 0%;" class="text-center">Vendas</h2>
-<div class="flex-fill">    
+<div class="flex-fill">
 <div class="container">
     <div class="row gx-3">
     <div class="col-12">
@@ -17,7 +17,7 @@
             @csrf
             <div class="col-12 col-md-6 mb-3">
                 <div class="form-floating">
-                    
+
                     <select class="form-select" name="periodo">
                         <option value="30" {{$filtros['periodo'] == 30 ? 'selected' : ''}}>Últimos 30 dias</option>
                         <option value="60" {{$filtros['periodo']  == 60 ? 'selected' : ''}}>Últimos 60 dias</option>
@@ -69,7 +69,7 @@
             <tbody>
                 @foreach ($vendas as $venda)
                 <?php
-                $total = 0; 
+                $total = 0;
                 $qtdProdutos = 0;
                 $cancelada = 0;
                     $itens = $venda->getItens;
@@ -87,7 +87,7 @@
                         <th>{{$qtdProdutos}}</th>
                         <th class="precoVendaAtual">{{$total}}</th>
                         <th>{{$venda->statusEntrega}}</th>
-                        <th>{{$venda->created_at}}</th>
+                        <th>{{date_format($venda->created_at, "d/m/Y H:i:s")}}</th>
                         <th>
                             @if(!is_null($venda->deleted_at))
                                 Cancelada <?php $cancelada = 1; ?>
@@ -101,9 +101,9 @@
                                 <button class="btn btn-warning btn-sm mb-2"> <i class="fa-solid fa-pen-to-square"></i> Editar</button>
                             </form>
                             @if($cancelada != 1)
-                                <a href="#delete{{$venda->id}}" data-bs-toggle="modal" class="btn btn-danger btn-sm"> <i class="fas fa-trash"></i> Cancelar</a>    
+                                <a href="#delete{{$venda->id}}" data-bs-toggle="modal" class="btn btn-danger btn-sm"> <i class="fas fa-trash"></i> Cancelar</a>
 
-                                <!-- MODAL --> 
+                                <!-- MODAL -->
                                 <div class="modal fade" id="delete{{$venda->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                     <div class="modal-dialog">
                                     <div class="modal-content">
@@ -129,7 +129,7 @@
                             </th>
                     </tr>
                 @endforeach
-                
+
             </tbody>
         </thead>
     </table>
@@ -146,7 +146,7 @@
             </div>
         </div>
     @endif
-   
+
 
 </div>
 </div>
@@ -167,7 +167,7 @@
       if (willDelete) {
         this.submit()
       }
-    }); 
+    });
   })
 </script>
 @endpush

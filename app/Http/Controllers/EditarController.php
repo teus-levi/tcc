@@ -585,15 +585,40 @@ class EditarController extends Controller
 
         $venda = Venda::find($request->id);
             if(!is_null($venda)){
+            DB::beginTransaction();
             //implementar motivo
             $motivo = $request->motivo;
 
             $venda->descDelete = $motivo;
             $usuario = $venda->getUser;
             $venda->statusEntrega = "Cancelado.";
-            $venda->save();
 
+
+            //deletando itens da venda e restaurando estoque
+            //dd($venda->getItens);
+            $itens = $venda->getItens;
+            foreach ($itens as $produtos) {
+                $listaEst = explode(", ", $produtos->listaEstoque);
+                unset($listaEst[(count($listaEst) - 1)]);
+                $qtd = count($listaEst);
+                //dd($qtd);
+                for ($i=0; $i < $qtd; $i += 2) {
+                //dd($listaEst[($i + 1)]);
+                    $estoque = Estoque::withTrashed()->find($listaEst[$i]);
+                    $novaQtd = $estoque->quantidade + $listaEst[($i + 1)];
+                    $estoque->update([
+                        'quantidade' => $novaQtd
+                    ]);
+                }
+                //dd($produtos);
+
+            }
+            //dd($itens);
+
+            $venda->save();
             $venda->delete();
+
+            DB::commit();
 
             $this->sendMail($venda);
 
@@ -601,6 +626,7 @@ class EditarController extends Controller
             return redirect()->route('listarVendas');
         } else {
             $request->session()->flash('erro', "Algo deu errado, tente novamente!");
+            DB::rollBack();
             return redirect()->route('listarVendas');
         }
     }

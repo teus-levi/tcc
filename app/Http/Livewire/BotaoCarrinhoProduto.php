@@ -16,7 +16,7 @@ class BotaoCarrinhoProduto extends Component
         $produto = Produto::find($id);
         $marca = Marca::find($produto->marca);
         $cart = session()->get('cart', []);
-        if(isset($cart[$id])){
+        if(isset($cart[$id]) && ($cart[$id]['quantidade'] + 1) <= 10){
             $cart[$id]['quantidade']++;
         } else {
             $cart[$id] = [
@@ -32,7 +32,7 @@ class BotaoCarrinhoProduto extends Component
         $this->emitTo('carrinho', 'refreshComponent');
     }
 
-   
+
     public function render()
     {
         return view('livewire.botao-carrinho-produto');

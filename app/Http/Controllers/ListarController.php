@@ -87,13 +87,20 @@ class ListarController extends Controller
             //$produto = Produto::find($request->id);
             $produto = DB::table('produtos')
                     ->join('marcas', 'produtos.marca', '=', 'marcas.id')
+                    ->join('categorias', 'produtos.categoria', '=', 'categorias.id')
                     ->join('estoques', 'produtos.id', '=', 'estoques.produto')
                     ->whereNull('estoques.deleted_at')
                     ->whereNull('produtos.deleted_at')
+                    ->whereNull('marcas.deleted_at')
+                    ->whereNull('categorias.deleted_at')
                     ->where('produtos.id', '=', $request->id)
                     ->select('produtos.*', DB::raw('SUM(estoques.quantidade) as quantidade'), 'marcas.nome as n_marca')
                     ->groupBy('produtos.id')
                     ->get();
+
+            if(!isset($produto[0])){
+                return redirect('/home');
+            }
             $produtosCategoria = DB::table('produtos')
                     ->join('categorias', 'produtos.categoria', '=', 'categorias.id')
                     ->join('estoques', 'produtos.id', '=', 'estoques.produto')

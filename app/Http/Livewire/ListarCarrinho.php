@@ -12,13 +12,11 @@ class ListarCarrinho extends Component
     public function increment($id){
         $produto = Produto::find($id);
         $cart = session()->get('cart', []);
-        if(isset($cart[$id])){
+        if(isset($cart[$id]) && ($cart[$id]['quantidade'] + 1) <= 10){
             $cart[$id]['quantidade']++;
             $this->total += $produto->precoVendaAtual;
-            
-        } else {
-            return redirect()->rout('/home');
-        }
+
+        } 
         session()->put('cart', $cart);
         $this->emitTo('carrinho', 'refreshComponent');
     }
@@ -26,11 +24,9 @@ class ListarCarrinho extends Component
     public function decrement($id){
         $produto = Produto::find($id);
         $cart = session()->get('cart', []);
-        if(isset($cart[$id])){
+        if(isset($cart[$id]) && ($cart[$id]['quantidade'] - 1) > 0){
             $cart[$id]['quantidade']--;
             $this->total -= $produto->precoVendaAtual;
-        } else {
-            return redirect()->rout('/home');
         }
         session()->put('cart', $cart);
         $this->emitTo('carrinho', 'refreshComponent');
@@ -44,8 +40,6 @@ class ListarCarrinho extends Component
             unset($cart[$id]);
             session()->forget('cart');
             session()->put('cart', $cart);
-        } else {
-            return redirect()->rout('/home');
         }
         $this->emitTo('carrinho', 'refreshComponent');
     }
@@ -57,7 +51,7 @@ class ListarCarrinho extends Component
                 $this->total += ($item['quantidade'] * $item['preco']);
             }
         }
-        
+
         return view('livewire.listar-carrinho');
     }
 }

@@ -41,7 +41,7 @@
                 <div class="col-12 col-md-6">
                     <div class="form-floating">
                         <select class="form-select" name="classificacao">
-                            <option value="1" {{$filtros['classificacao']  == 1 ? 'selected' : ''}}>Ativo</option>
+                            <option value="1" {{$filtros['classificacao']  == 1 ? 'selected' : ''}}>Ativos</option>
                             <option value="2" {{$filtros['classificacao'] == 2 ? 'selected' : ''}}>Inativos</option>
                             <option value="3" {{$filtros['classificacao'] == 3 ? 'selected' : ''}}>Independente</option>
                         </select>
