@@ -72,7 +72,7 @@
                 $total = 0;
                 $qtdProdutos = 0;
                 $cancelada = 0;
-                    $itens = $venda->getItens;
+                    $itens = $venda->getItensDeleted;
                     //dd($itens);
                     foreach ($itens as $produto) {
                         //dd($produto);

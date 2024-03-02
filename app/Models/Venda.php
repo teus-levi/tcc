@@ -19,6 +19,10 @@ class Venda extends Model
         return $this->hasMany(ItensVenda::class, 'venda');
     }
 
+    public function getItensDeleted(){
+        return $this->hasMany(ItensVenda::class, 'venda')->withTrashed();
+    }
+
     public function getUser(){
         return $this->belongsTo(User::class, 'cliente');
     }

@@ -73,12 +73,19 @@ class ListarController extends Controller
         ->where('estoques.produto', '=', $request->id)
         ->select('estoques.*', 'produtos.nome as n_produto')
         ->orderBy('estoques.id', 'desc')->paginate(10);
-        foreach ($est as $item) {
-            if(!is_null($item)){
-                return view('listar.estoque', compact('est'));
+        if(count($est) >0) {
+            foreach ($est as $item) {
+                if(!is_null($item)){
+                    return view('listar.estoque', compact('est'));
+                }
+                return redirect('/');
             }
-            return redirect('/');
+        } else {
+            $request->session()->flash('erro', "Item não encontrado");
+
+            return redirect('/home');
         }
+        
 
 
     }
@@ -430,7 +437,7 @@ class ListarController extends Controller
                         ->where('produtos.nome', 'like', '%'.$pesquisa.'%')
                         ->select('produtos.*', DB::raw('SUM(estoques.quantidade) as quantidade'))
                         ->groupBy('produtos.id')
-                        ->orderBy($ordenacao, $ordenacao2)->paginate(6);
+                        ->orderBy($ordenacao, $ordenacao2)->paginate(8);
             $carrinho = true;
             return view('principal.index', compact('produtos', 'carrinho', 'filtros', 'pesquisa'));
         } else {
@@ -444,7 +451,7 @@ class ListarController extends Controller
                             ->whereNull('marcas.deleted_at')
                             ->select('produtos.*', DB::raw('SUM(estoques.quantidade) as quantidade'))
                             ->groupBy('produtos.id')
-                            ->orderBy($ordenacao, $ordenacao2)->paginate(6);
+                            ->orderBy($ordenacao, $ordenacao2)->paginate(8);
                 $carrinho = true;
                 return view('principal.index', compact('produtos', 'carrinho', 'filtros'));
         }

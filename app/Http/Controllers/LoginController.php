@@ -68,7 +68,7 @@ class LoginController extends Controller
                 ->whereNull('marcas.deleted_at')
                 ->select('produtos.*', DB::raw('SUM(estoques.quantidade) as quantidade'))
                 ->groupBy('produtos.id')
-                ->orderBy('produtos.nome', 'asc')->paginate(6);
+                ->orderBy('produtos.nome', 'asc')->paginate(8);
                 $carrinho = true;
                 $filtros['ordenacao'] = 1; //ordenar pelo nome
             return view('principal.index', compact('produtos', 'carrinho', 'filtros'));
@@ -93,7 +93,7 @@ class LoginController extends Controller
                         ->whereNull('marcas.deleted_at')
                         ->select('produtos.*', DB::raw('SUM(estoques.quantidade) as quantidade'))
                         ->groupBy('produtos.id')
-                        ->orderBy('produtos.nome', 'asc')->paginate(6);
+                        ->orderBy('produtos.nome', 'asc')->paginate(8);
             $carrinho = true;
             $filtros['ordenacao'] = 1;
             return view('principal.index', compact('produtos', 'carrinho', 'filtros'));

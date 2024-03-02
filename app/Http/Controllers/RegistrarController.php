@@ -83,13 +83,20 @@ class RegistrarController extends Controller
 
     public function store_marcas(Request $request){
         if(Auth::check()){
-            $user = Auth::user();
-            $dados = $request->all();
-            $dados += ["administrador" => $user->id];
-            //dd($dados);
-            Marca::create($dados);
-            $request->session()->flash('mensagem', "Marca registrada com sucesso!");
-            return redirect('registrarMarcas');
+            $nome = Marca::query()->withTrashed()->where('nome', '=', $request->nome)->get();
+            if(!isset($nome[0])){
+                $user = Auth::user();
+                $dados = $request->all();
+                $dados += ["administrador" => $user->id];
+                //dd($dados);
+                Marca::create($dados);
+                $request->session()->flash('mensagem', "Marca registrada com sucesso!");
+                return redirect('registrarMarcas');
+            } else {
+                $request->session()->flash('erro', "Marca com nome {$request->nome} já existe, use ou ative novamente!");
+                return redirect('registrarMarcas');
+            }
+            
 
         } else{
             return redirect('registrarMarcas');
@@ -107,13 +114,20 @@ class RegistrarController extends Controller
 
     public function store_categorias(Request $request){
         if(Auth::check()){
-            $user = Auth::user();
-            $dados = $request->all();
-            $dados += ["administrador" => $user->id];
-            //dd($dados);
-            Categoria::create($dados);
-            $request->session()->flash('mensagem', "Categoria registrada com sucesso!");
-            return redirect('registrarCategorias');
+            $nome = Categoria::query()->withTrashed()->where('nome', '=', $request->nome)->get();
+            if(!isset($nome[0])){
+                $user = Auth::user();
+                $dados = $request->all();
+                $dados += ["administrador" => $user->id];
+                //dd($dados);
+                Categoria::create($dados);
+                $request->session()->flash('mensagem', "Categoria registrada com sucesso!");
+                return redirect('registrarCategorias');
+            } else {
+                $request->session()->flash('erro', "Categoria com nome {$request->nome} já existe, use ou ative novamente!!");
+                return redirect('registrarCategorias');
+            }
+            
 
         } else{
             return redirect('registrarCategorias');
@@ -147,7 +161,7 @@ class RegistrarController extends Controller
 
     public function reg_estoque(Request $request){
         if(Auth::check()){
-            $produto = Produto::find($request->id);
+            $produto = Produto::withTrashed()->find($request->id);
             return view('registros.estoque', compact('produto'));
         } else{
             return redirect('/home');
@@ -198,7 +212,12 @@ class RegistrarController extends Controller
             $venda->estado = $dados['estado'];
             $venda->logradouro = $dados['logradouro'];
             $venda->bairro = $dados['bairro'];
-            $venda->numero = $dados['numero'];
+            if($dados['numero'] == NULL){
+                $venda->numero = 0;
+            } else {
+                $venda->numero = $dados['numero'];
+
+            }
             if($venda->modoRecebimento == "Pix"){
                 $venda->statusEntrega = "Aguardando pix.";
             } else {
@@ -244,7 +263,8 @@ class RegistrarController extends Controller
                         //Criando registro na tabela ItensVendas
                         $listaEstoque = '';
                         $qtdTotal = $item['quantidade'];
-                        foreach($produto->getEstoques as $estoque){
+                        $estoques = $produto->getEstoques;
+                        foreach($estoques as $estoque){
                             if($qtdTotal > $estoque->quantidade){
                                 //quantidade maior que o estoque atual
                                 $qtdTotal -= $estoque->quantidade;

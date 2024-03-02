@@ -54,7 +54,7 @@
                                 <button type="submit" class="btn btn-success btn-sm"> <i class="fa-solid fa-toggle-on fa-xs"></i></button>
                             </form>
                         @else
-                            <form  class="deleteAlert" action="/ativarEstoque/{{ $item->id }}" method="POST">
+                            <form  class="activeAlert" action="/ativarEstoque/{{ $item->id }}" method="POST">
                                 @csrf
                                 <button type="submit" class="btn btn-danger btn-sm"> <i class="fa-solid fa-toggle-off fa-xs"></i></button>
                             </form>
@@ -76,6 +76,24 @@
     swal({
       title: "Atenção!",
       text: "O estoque será desativado, deseja confirmar?",
+      icon: "warning",
+      buttons: ["Cancelar", "Confirmar"],
+      dangerMode: true,
+    })
+    .then((willDelete) => {
+      if (willDelete) {
+        this.submit()
+      }
+    });
+  })
+</script>
+
+<script>
+      $('.activeAlert').on('submit', function(e){
+    e.preventDefault();
+    swal({
+      title: "Atenção!",
+      text: "O estoque será ativado, deseja confirmar?",
       icon: "warning",
       buttons: ["Cancelar", "Confirmar"],
       dangerMode: true,

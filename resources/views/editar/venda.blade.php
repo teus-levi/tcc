@@ -85,7 +85,7 @@
                     </tr>
                     <tbody>
                         <?php 
-                            $produtos =  $venda->getItens;
+                            $produtos =  $venda->getItensDeleted;
                             $valorTotal = 0;
                         ?>
                         @if(!empty($produtos))

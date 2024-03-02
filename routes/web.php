@@ -143,6 +143,7 @@ Route::middleware('auth')->group(function(){
     Route::get('/removerProduto/{id}', [EditarController::class, 'delete_prod'])->name('removerProduto')->middleware('can:administrador');
     Route::get('/ativarProduto/{id}', [EditarController::class, 'active_prod'])->name('ativarProduto')->middleware('can:administrador');
     Route::post('/removerEstoque/{id}', [EditarController::class, 'delete_estoque'])->name('removerEstoque')->middleware('can:administrador');
+    Route::post('/ativarEstoque/{id}', [EditarController::class, 'active_estoque'])->name('ativarEstoque')->middleware('can:administrador');
     Route::get('/removerMarca/{id}', [EditarController::class, 'delete_marca'])->name('removerMarca')->middleware('can:administrador');
     Route::get('/ativarMarca/{id}', [EditarController::class, 'active_marca'])->name('ativarMarca')->middleware('can:administrador');
     Route::get('/removerCategoria/{id}', [EditarController::class, 'delete_categoria'])->name('removerCategoria')->middleware('can:administrador');

@@ -109,7 +109,7 @@
                                 0
                             @endif
                         </th>
-                            @if($item->quantidade == 0 || is_null($item->quantidade))
+                            @if(is_null($item->quantidade))
                                 <form action="/registrarEstoque/{{ $item->id }}" method="POST">
                                     @csrf
                                     <th>
@@ -122,14 +122,12 @@
                                     @csrf
                                     <button class="btn btn-warning mb-2"> <i class="fas fa-list fa-xs"></i></button>
                                 </form>
-                                @if(is_null($item->deleted_at))
                                     <form action="/registrarEstoque/{{ $item->id }}" method="post">
                                         @csrf
                                         <button class="btn btn-success">
                                             <i class="fa-solid fa-plus fa-xs"></i>
                                         </button>
                                     </form>
-                                @endif
                                 </th>
                             @endif
                             @if(is_null($item->deleted_at))

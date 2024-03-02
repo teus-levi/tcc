@@ -175,9 +175,9 @@ class EditarController extends Controller
                 $pontuacao = array(".", ",");
                 $request->precoCompra = str_replace($pontuacao, "", $request->precoCompra);
                 //dd($request->all());
-                $estoque = Estoque::find($request->id);
+                $estoque = Estoque::withTrashed()->find($request->id);
                 //dd($estoque);
-                Estoque::where('id', $request->id)->update([
+                Estoque::withTrashed()->where('id', $request->id)->update([
                     'quantidade' => $request->quantidade,
                     'precoCompra' => $request->precoCompra,
                     'lote' => $request->lote,
@@ -197,7 +197,21 @@ class EditarController extends Controller
             $estoque = Estoque::find($request->id);
             if($estoque){
                 $estoque->delete();
-                $request->session()->flash('mensagem', "Estoque deletado com sucesso!");
+                $request->session()->flash('mensagem', "Estoque desativado com sucesso!");
+                return redirect()->back();
+            }
+        } else {
+            return redirect()->route('login');
+        }
+    }
+
+    public function active_estoque(Request $request){
+        if(Auth::check()){
+            $estoque = Estoque::withTrashed()->find($request->id);
+            if($estoque){
+                $estoque->deleted_at = NULL;
+                $estoque->save();
+                $request->session()->flash('mensagem', "Estoque ativado com sucesso!");
                 return redirect()->back();
             }
         } else {
@@ -527,54 +541,65 @@ class EditarController extends Controller
     }
     //usuário cancelando o pedido que fez
     public function store_pedido(Request $request){
+        
         $pedido = Venda::find($request->id);
         $cliente = Cliente::first('usuario', Auth::id());
         if($pedido){
+            DB::beginTransaction();
             if($pedido->cliente != $cliente->id && $cliente->getUsuario->administrador == 0){
                 $request->session()->flash('erro', 'Usuários diferentes, entre na conta correta.');
+                DB::rollback();
                 return redirect('/home');
             }
-            //separando a quantidade dos produtos em estoque
-            $produtoEstoque = $pedido->getItens;
+            //pegando itens da venda
+            $itens = $pedido->getItens;
             if($pedido->statusEntrega != "Em preparação." && $pedido->statusEntrega != "Aguardando pix."){
                 $request->session()->flash('erro', "Não é possível cancelar o pedido pelo sistema, entre em contato com a farmácia.");
+                DB::rollback();
                 return redirect()->route('listarDetalhesPedido', [$request->id]);
             } else {
-                $pedido->statusentrega = "Cancelado.";
+                $pedido->statusEntrega = "Cancelado.";
                 $pedido->descDelete = "Cancelado pelo cliente.";
                 $pedido->save();
                 $pedido->delete();
 
-                //repondo valores no estoque
-                foreach ($produtoEstoque as $item) {
-                    //pegar todos os estoques
-                    $idEstoque = $item->getProduto->getAllEstoques;
-                    //dd($idEstoque);
-                    //Pegar o último estoque cadastrado
-                    $estoqueId = 0;
-                    foreach ($idEstoque as $estoque) {
-                        $estoqueId = $estoque->id;
-                    }
-                    $qtd = Estoque::withTrashed()->where('id', $estoqueId)->get();
-
-                    if(!is_null($qtd[0]->deleted_at)){
-                        Estoque::withTrashed()->where('id', $estoqueId)->update([
-                            'deleted_at' => NULL
-                        ]);
-
-                    }
-
-                    $qtdTotal = $qtd[0]->quantidade + $item->quantidade;
-                    Estoque::withTrashed()->where('id', $estoqueId)->update([
-                        'quantidade' => $qtdTotal
+            //deletando itens da venda e restaurando estoque
+            //dd($venda->getItens);
+            
+            foreach ($itens as $produtos) {
+                $listaEst = explode(", ", $produtos->listaEstoque);
+                unset($listaEst[(count($listaEst) - 1)]);
+                $qtd = count($listaEst);
+                //dd($qtd);
+                for ($i=0; $i < $qtd; $i += 2) {
+                //dd($listaEst[($i + 1)]);
+                    $estoque = Estoque::withTrashed()->find($listaEst[$i]);
+                    $novaQtd = $estoque->quantidade + $listaEst[($i + 1)];
+                    $estoque->update([
+                        'quantidade' => $novaQtd
                     ]);
+
+                    if($estoque->deleted_at != NULL){
+                        $estoque->deleted_at = NULL;
+                        $estoque->save();
+                    }
+
+                    $produtos->delete();
                 }
+                //dd($produtos);
+
+            }
+                DB::commit();
+
+                $this->sendMail($pedido);
 
                 $request->session()->flash('mensagem', "Pedido cancelado com sucesso!");
+                
                 return redirect()->route('listarDetalhesPedido', [$request->id]);
             }
         } else {
             $request->session()->flash('erro', "Ocorreu um erro, tente novamente!");
+            DB::rollback();
             return redirect()->route('listarDetalhesPedido', [$request->id]);
         }
     }
@@ -609,6 +634,14 @@ class EditarController extends Controller
                     $estoque->update([
                         'quantidade' => $novaQtd
                     ]);
+
+                    if($estoque->deleted_at != NULL){
+                        $estoque->deleted_at = NULL;
+                        $estoque->save();
+                    }
+
+                    $produtos->delete();
+
                 }
                 //dd($produtos);
 
@@ -640,7 +673,7 @@ class EditarController extends Controller
             $mail = new RegisterEmail([
                 'nome' => $nome[0],
                 'mensagem' => "Informamos que seu pedido número {$venda->id} foi cancelado.
-                <br>Motivo: $venda->descDelete"
+                Motivo: $venda->descDelete"
             ]);
             Mail::to($usuario->email)->later($tempo, $mail);
 
