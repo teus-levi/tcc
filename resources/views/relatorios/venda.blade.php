@@ -15,7 +15,7 @@
 <body>
         <h1 style="text-align: center">Relatório de Vendas</h1>
         @if(isset($mes))
-            <p style="text-align: center">Quantidade vendida em {{date_format(new DateTime($mes), "m/Y")}}</p>
+            <p style="text-align: center">Quantidade vendida em  teste {{date_format(new DateTime($mes), "m/Y")}}</p>
         @else
             <p style="text-align: center">Quantidade vendida em todo período</p>
         @endif
